@@ -1,0 +1,32 @@
+<?php /* #?ini charset="utf-8"?
+
+[NavigationPart]
+Part[ezupdatenavigationpart]=DSE
+
+#[TopAdminMenu]
+#Tabs[]=dse
+
+[Topmenu_dse]
+NavigationPartIdentifier=dsenavigationpart
+Name=DS Editor
+Tooltip=Database Source Editor
+URL[]
+URL[default]=dse/dashboard
+Enabled[]
+Enabled[default]=true
+Enabled[browse]=false
+Enabled[edit]=false
+Shown[]
+Shown[default]=true
+Shown[update]=true
+Shown[edit]=true
+Shown[navigation]=true
+# We don't show it in browse mode
+Shown[browse]=true
+PolicyList[]=dse/dashboard
+
+[Leftmenu_setup]
+Links[dse]=dse/dashboard
+LinkNames[dse]=DS Editor
+
+*/ ?>

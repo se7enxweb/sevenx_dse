@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<title>JUSH - SQL</title>
+<link rel="stylesheet" media="(prefers-color-scheme: dark)" href="demo-dark.css">
+<body>
+
+<p>
+<input id="source" name="source" size="50" oninput="highlight(this.value);" autocomplete="off">
+</p>
+
+<table cellspacing="0">
+<tr><th>MySQL</th><td id="sql"></td></tr>
+<tr><th>SQLite</th><td id="sqlite"></td></tr>
+<tr><th>PostgreSQL</th><td id="pgsql"></td></tr>
+<tr><th>MS SQL </th><td id="mssql"></td></tr>
+<tr><th>Oracle </th><td id="oracle"></td></tr>
+</table>
+
+<script src="jush.js"></script>
+<script>
+function highlight(source) {
+	for (var lang in { sql: 1, sqlite: 1, pgsql: 1, mssql: 1, oracle: 1 }) {
+		document.getElementById(lang).innerHTML = '<code class="jush-' + lang + '">' + jush.highlight(lang, source) + '</code>';
+	}
+	location.hash = encodeURIComponent(source);
+}
+
+jush.create_links = 'target="_blank"';
+jush.style('jush.css');
+jush.style('jush-dark.css', '(prefers-color-scheme: dark)');
+if (location.hash) {
+	var source = document.getElementById('source');
+	source.value = decodeURIComponent(location.hash.substr(1));
+	highlight(source.value);
+}
+</script>

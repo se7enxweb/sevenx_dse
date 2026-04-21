@@ -1,0 +1,60 @@
+{
+    "name": "se7enxweb/sevenx_dse",
+    "description": "sevenx_dse : 7x Database Source Editor — embeds AdminNeo as a direct database source editor inside the eZ Publish / Exponential Platform Legacy admin UI — providing raw SQL, table browsing, import/export, and multi-driver support (MySQL, SQLite) through a scoped, permission-gated interface.",
+    "keywords": [ "eZ Publish", "eZ Publish Legacy", "Exponential Platform", "database editor", "adminneo", "adminer", "database management", "sql","extension", "module", "view", "mysql", "sqlite", "postgresql" ],
+    "homepage": "https://github.com/se7enxweb/sevenx_dse",
+    "license": "GPL-2.0-or-later",
+    "type": "ezpublish-legacy-extension",
+    "authors": [
+        {
+            "name" : "7x",
+            "homepage": "https://se7enx.com",
+            "email": "info@se7enx.com",
+            "role": "7x DSE Author"
+        },
+        {
+            "name": "Peter Knut",
+            "role": "Original Core Author"
+        },
+        {
+            "name": "Jakub Vrána",
+            "homepage": "https://www.vrana.cz/",
+            "role": "Original Core Author"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "7.1 - 8.5",
+        "ext-json": "*",
+        "se7enxweb/exponential-legacy-installer": "*"
+    },
+    "require-dev": {
+        "vrana/jush": "@dev",
+        "vrana/jsshrink": "@dev",
+        "vrana/phpshrink": "@dev"
+    },
+    "suggest": {
+        "ext-openssl": "Allows secure encryption of login information",
+        "ext-zlib": "Allows gzip compression of data export",
+        "ext-bz2": "Allows bzip2 compression of data export",
+        "ext-zip": "Allows ZIP compression of data export",
+        "ext-suhosin": "Enhace CSRF protection",
+        "ext-mysqli": "Allows access to MySQL database",
+        "ext-mysql": "Allows access to MySQL database (old driver)",
+        "ext-pgsql": "Allows access to PostgreSQL database",
+        "ext-mongodb": "Allows access to MongoDB database",
+        "ext-sqlsrv": "Allows access to MS SQ database",
+        "ext-sqlite3": "Allows access to SQLite database",
+        "ext-oci8": "Allows access to Oracle database",
+        "ext-simplexml": "Allows access to SimpleDB database",
+        "ext-libxml": "Allows processing responses from SimpleDB database",
+        "ext-pdo": "PDO database interface",
+        "ext-pdo_pgsql": "PDO driver for PostgreSQL database",
+        "ext-pdo_dblib": "PDO driver for MS SQL database and Sybase",
+        "ext-pdo_sqlite": "PDO driver for SQLite database",
+        "ext-pdo_oci": "PDO driver for Oracle database"
+    },
+    "extra": {
+        "ezpublish-legacy-extension-name": "sevenx_dse"
+    }
+}

@@ -1,0 +1,303 @@
+table {
+	position: relative;
+	margin: 15px 20px;
+	border-spacing: 0;
+	background: var(--table-bg);
+	border: 1px solid var(--table-border);
+}
+
+table code {
+	background: none;
+	border: none;
+	padding: 0;
+	line-height: 1.27;
+}
+
+td, th {
+	padding: 4px 10px 2px;
+}
+
+/* Compensation for textarea top margin. */
+td:has(textarea:first-child) {
+	padding-top: 9px;
+}
+
+th {
+	background: var(--panel-bg);
+	text-align: left;
+	font-weight: normal;
+}
+
+tbody th + td, tbody td + th {
+	border-inline-start: 1px solid var(--table-row-border);
+}
+
+thead {
+	position: sticky;
+	top: 2rem;
+	z-index: 1;
+}
+
+thead th, thead td {
+	padding: 6px 10px 4px;
+	background: var(--table-header-bg);
+	border-bottom: 1px solid var(--table-border);
+}
+
+tfoot th, tfoot td {
+	padding: 6px 10px 4px;
+	background: var(--table-header-bg);
+	border-top: 1px solid var(--table-border);
+}
+
+tbody th, tbody td {
+	border-bottom: 1px solid var(--table-row-border);
+	vertical-align: baseline;
+}
+
+tbody tr:last-child > th, tbody tr:last-child > td {
+	border-bottom: none;
+}
+
+table.nowrap th, table.nowrap thead td {
+	white-space: nowrap;
+}
+
+table.nowrap tbody td {
+	white-space: pre;
+}
+
+table > tbody > tr:hover > th, table > tbody > tr:hover > td {
+	background: var(--list-hover);
+}
+
+table.checkable > tbody > tr.checked > th, table.checkable > tbody > tr.checked > td {
+	background: var(--list-active);
+}
+
+table.checkable > tbody > tr.checked:hover > th, table.checkable > tbody > tr.checked:hover > td {
+	background: var(--list-active-hover);
+}
+
+table.box {
+	background: var(--panel-bg);
+	border-radius: var(--box-border-radius);
+}
+
+table.box > tbody > tr > th {
+	background: var(--table-header-bg);
+	text-align: right;
+}
+
+table.box > tbody > tr > td {
+	background: none;
+}
+
+table.box > tbody > tr:first-child > th, table.box > tbody > tr:first-child > td {
+	padding-top: 10px;
+}
+
+/* Compensation for textarea top margin. */
+table.box > tbody > tr:first-child > td:has(textarea:first-child) {
+	padding-top: 15px;
+}
+
+table.box > tbody > tr:last-child > th, table.box > tbody > tr:last-child > td {
+	padding-bottom: 10px;
+}
+
+table.box > tbody > tr > th, table.box > tbody > tr > td {
+	vertical-align: baseline;
+	height: 34px;
+	border-bottom: none;
+}
+
+table.box > tbody > tr > td + td {
+	padding-left: 0;
+}
+
+td table {
+	width: 100%;
+	margin: 0;
+}
+
+td img {
+	max-width: 200px;
+	max-height: 200px;
+}
+
+td pre {
+	margin: 0;
+}
+
+td.options select {
+	width: 20ex;
+}
+
+td.default-value select + .input {
+	margin-inline-start: 5px;
+}
+
+tr .actions input[type="checkbox"] {
+	vertical-align: middle;
+}
+
+tr .actions input:last-of-type {
+	margin-inline-end: 0;
+}
+
+tr .actions .icon {
+	margin-inline-start: 5px;
+}
+
+.js .column {
+	position: absolute;
+	background: var(--table-header-bg);
+	margin: -7px 5px 0 5px;
+	border: 1px solid var(--table-border);
+	border-left: none;
+	border-radius: 0 var(--input-border-radius) var(--input-border-radius) 0;
+}
+
+.js .column .button {
+	padding: 6px 6px 4px;
+	line-height: 1.4;
+}
+
+.nojs .column .button:not(.jsonly) {
+	display: inline;
+}
+
+/* Required to achieve full with of sticky table footer. */
+.table-footer-parent {
+	min-width: 100%;
+	width: fit-content;
+}
+
+.table-footer-parent + p {
+	margin-top: 10px;
+}
+
+.table-footer {
+	position: sticky;
+	bottom: 0;
+	margin-top: 15px;
+	background: var(--body-bg);
+	overflow-x: auto;
+}
+
+.table-footer.sticky {
+	border-top: 1px solid var(--panel-border);
+	z-index: 2; /* To be over the thead. */
+}
+
+.table-footer .field-sets {
+	margin: 0;
+	padding: 10px 20px 15px;
+	width: max-content;
+	flex-wrap: nowrap;
+}
+
+.table-footer fieldset {
+	margin-top: 0;
+}
+
+.pagination {
+	display: flex;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	gap: 5px;
+}
+
+.pagination li {
+	line-height: 24px;
+}
+
+.pagination a, .pagination strong {
+	padding: 3px;
+}
+
+/* Required to include the right table margin to scrollable area. */
+.scrollable {
+	width: fit-content;
+}
+
+/* Spacing in multi SQL results. */
+.scrollable + .scrollable, .scrollable + .message {
+	margin-top: 40px;
+}
+
+.table-result {
+	margin-bottom: 40px;
+}
+
+@media (hover: none) {
+	/* Turn off sticky header on touch screens. It does not work on mobile Safari at all. */
+	thead {
+		position: static;
+	}
+
+	.table-footer-parent {
+		width: auto;
+	}
+
+	.scrollable {
+		width: auto;
+		overflow-x: auto;
+		margin: -15px 0;
+	}
+
+	.scrollable + .scrollable {
+		margin-top: 25px;
+	}
+}
+
+@media (max-width: 599px) {
+	table.box {
+		display: block;
+	}
+
+	table.box > tbody, table.box > tbody > tr, table.box > tbody > tr > th, table.box > tbody > tr > td {
+		display: block;
+		width: 100%;
+	}
+
+	table.box > tbody > tr {
+		padding-bottom: 5px;
+		border-bottom: 1px solid var(--table-row-border);
+	}
+
+	table.box > tbody > tr:last-child {
+		border-bottom: none;
+	}
+
+	table.box > tbody > tr > th, table.box > tbody > tr > td {
+		border: none;
+		height: auto;
+		text-align: left;
+	}
+
+	table.box > tbody > tr > th {
+		padding: 7px 10px 5px !important;
+		margin-bottom: 5px;
+	}
+
+	table.box > tbody > tr > td {
+		padding: 5px 10px !important;
+	}
+
+	table.box-light {
+		width: fit-content;
+	}
+
+	table.box-light > tbody > tr {
+		border-bottom: none;
+	}
+
+	table.box-light > tbody > tr > th {
+		background: none;
+		margin-bottom: 0;
+		padding-bottom: 0 !important;
+	}
+}

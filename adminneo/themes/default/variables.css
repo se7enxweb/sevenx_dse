@@ -1,0 +1,53 @@
+:root {
+	color-scheme: light;
+
+	--font-family: Helvetica, Arial, sans-serif;
+	--font-family-mono: JetBrains Mono, Menlo, Consolas, Liberation Mono, monospace;
+	--font-size: 14; /* px */
+	--font-size-mono: 13; /* px */
+	--menu-width: 13rem;
+
+	--body-bg: #fff;
+	--body-text: #333;
+	--body-icon: #666;
+	--note-text: rgba(0, 0, 0, 40%);
+
+	--logo-text: #a0a0a0;
+	--panel-bg: #fcfcfc;
+	--panel-border: #e0e0e0;
+	--header-text: #000;
+	--list-hover: hsla(220, 0%, 20%, 4%);
+
+	--input-bg: #fff;
+	--input-text: #000;
+	--input-border: #ccc;
+	--required-border: #c40;
+	--select-arrow: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcuNDEsOC41OEwxMiwxMy4xN0wxNi41OSw4LjU4TDE4LDEwTDEyLDE2TDYsMTBMNy40MSw4LjU4WiIgLz48L3N2Zz4=");
+
+	--button-bg: #fff;
+	--button-default-text: #fff;
+	--button-default-text-hover: #fff;
+
+	--table-bg: #fff;
+	--table-header-bg: #f6f6f6;
+	--table-border: #e0e0e0;
+	--table-row-border: #ebebeb;
+
+	--code-bg: hsl(220, 80%, 97%);
+	--code-border: hsl(220, 80%, 92%);
+
+	--message-ok-bg: hsl(120, 70%, 95%);
+	--message-ok-border: hsl(120, 40%, 87%);
+	--message-ok-text: hsl(120, 100%, 20%);
+
+	--message-error-bg: hsl(0, 65%, 95%);
+	--message-error-border: hsl(0, 65%, 90%);
+	--message-error-text: hsl(0, 100%, 30%);
+
+	--warning-text: hsl(24, 100%, 50%);
+	--version-text: hsl(24, 100%, 50%);
+
+	--input-border-radius: 3px;
+	--fieldset-border-radius: 3px;
+	--box-border-radius: 3px;
+}

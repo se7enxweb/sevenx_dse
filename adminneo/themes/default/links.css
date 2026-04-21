@@ -1,0 +1,49 @@
+.links {
+	display: flex;
+	position: relative;
+	flex-wrap: wrap;
+	gap: 5px 20px;
+}
+
+ul.links {
+	flex-direction: column;
+}
+
+.links a {
+	padding: 0;
+	white-space: nowrap;
+}
+
+.links .time {
+	position: absolute;
+	right: 0;
+}
+
+.rtl .links .time {
+	left: 0;
+	right: auto;
+}
+
+.top-links {
+	margin: 25px 20px;
+}
+
+.top-tabs {
+	margin: 25px 20px;
+	gap: 7px 5px;
+}
+
+.top-tabs a {
+	margin-top: -5px;
+	padding: 5px 10px 3px 8px;
+}
+
+.top-tabs a.active {
+	background: var(--list-active);
+	border-radius: var(--input-border-radius);
+}
+
+#ajaxstatus.hidden + .top-links,
+#ajaxstatus.hidden + .top-tabs {
+	margin-top: 20px;
+}

@@ -1,0 +1,17 @@
+{
+    "name": "vrana/phpshrink",
+    "description": "Remove spaces and comments from PHP code.",
+    "homepage": "https://github.com/vrana/PhpShrink",
+    "authors": [
+        {
+            "name": "Jakub Vrána",
+            "homepage": "https://www.vrana.cz"
+        }
+    ],
+    "license": [
+        "Apache-2.0"
+    ],
+    "require": {
+        "php": ">=5.3"
+    }
+}

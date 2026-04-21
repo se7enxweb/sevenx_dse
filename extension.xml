@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<software>
+    <metadata>
+        <name>sevenx_dse : 7x Database Source Editor</name>
+        <version>1.0.0</version>
+        <copyright>Copyright (C) 1998 - 2026 7x</copyright>
+        <license>GNU General Public License v2</license>
+        <info_url>https://github.com/se7enxweb/sevenx_dse</info_url>
+    </metadata>
+</software>
