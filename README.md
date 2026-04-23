@@ -7,6 +7,17 @@
 
 > **sevenx_dse** is a downstream fork of [AdminNeo](https://www.adminneo.org/) embedded as a native eZ Publish Legacy extension — delivering raw SQL access, table browsing, schema inspection, import/export, and multi-driver database support (MySQL, SQLite, PostgreSQL) directly inside the Exponential Platform Legacy admin interface, scoped behind eZ Publish role-based permissions.
 
+## Screenshots
+
+<img width="1608" height="933" alt="Screenshot 2026-04-21 at 19-25-52 Database Source Editor - 7x Alpha" src="https://github.com/user-attachments/assets/a04f105f-0a10-429e-970f-60baf7cc6491" />
+
+<img width="1719" height="933" alt="Screenshot 2026-04-21 at 19-11-23 Database Source Editor - 7x Alpha" src="https://github.com/user-attachments/assets/5b86a7a3-8cf3-462b-aacb-b8800822a697" />
+
+<img width="1719" height="4945" alt="Screenshot 2026-04-21 at 19-12-16 Database Source Editor - 7x Alpha" src="https://github.com/user-attachments/assets/91e9136b-8fac-480d-beeb-a174e5fc6fdb" />
+
+<img width="1608" height="933" alt="Screenshot 2026-04-21 at 19-26-04 Database Source Editor - 7x Alpha" src="https://github.com/user-attachments/assets/0494a593-0482-4b0f-9cbf-fd6bed2e0311" />
+
+
 ---
 
 ## Table of Contents
