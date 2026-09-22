@@ -11,6 +11,29 @@
  * @author  7x <info@se7enx.com>
  */
 
+
+if ( !function_exists( '_dse_sanitize_sqlite_path' ) ) {
+function _dse_sanitize_sqlite_path( string $input, string $siteRoot ): string
+{
+    // Reject absolute paths.
+    if ( preg_match( '~^[/\\\\]~', $input ) ) {
+        return '';
+    }
+    // Reject any path component that escapes the site root.
+    if ( preg_match( '~(^|[/\\\\])\.\.[/\\\\]~', $input ) || substr( $input, -3 ) === '/..' ) {
+        return '';
+    }
+    // Verify the file actually exists within the site root.
+    $resolved = realpath( $siteRoot . '/' . $input );
+    if ( $resolved === false || strpos( $resolved, $siteRoot . '/' ) !== 0 ) {
+        return '';
+    }
+    // Return the RELATIVE path unchanged — keeps URLs and session keys clean.
+    // SQLite3 resolves the path to absolute via DSE_SQLITE_BASE in sqlite.inc.php open().
+    return $input;
+}
+}
+
 $adminNeoDir = realpath( dirname( __FILE__ ) . '/../../adminneo' );
 
 // ── Feature flags ─────────────────────────────────────────────────────────
@@ -226,25 +249,6 @@ if ( isset( $_POST['dse_ack_warning'] ) ) {
 // consistently, so no absolute filesystem paths ever appear in the browser.
 $_dseSiteRoot = realpath( dirname( __FILE__ ) . '/../../../..' );
 
-function _dse_sanitize_sqlite_path( string $input, string $siteRoot ): string
-{
-    // Reject absolute paths.
-    if ( preg_match( '~^[/\\\\]~', $input ) ) {
-        return '';
-    }
-    // Reject any path component that escapes the site root.
-    if ( preg_match( '~(^|[/\\\\])\.\.[/\\\\]~', $input ) || substr( $input, -3 ) === '/..' ) {
-        return '';
-    }
-    // Verify the file actually exists within the site root.
-    $resolved = realpath( $siteRoot . '/' . $input );
-    if ( $resolved === false || strpos( $resolved, $siteRoot . '/' ) !== 0 ) {
-        return '';
-    }
-    // Return the RELATIVE path unchanged — keeps URLs and session keys clean.
-    // SQLite3 resolves the path to absolute via DSE_SQLITE_BASE in sqlite.inc.php open().
-    return $input;
-}
 
 if ( isset( $_GET['sqlite'] ) && $_GET['sqlite'] !== '' ) {
     $_GET['sqlite'] = _dse_sanitize_sqlite_path( $_GET['sqlite'], $_dseSiteRoot );
