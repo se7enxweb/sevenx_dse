@@ -288,13 +288,13 @@ function page_headers(): void
  */
 function get_nonce(): string
 {
-	static $nonce;
-
-	if (!$nonce) {
-		$nonce = Random::strongKey();
+	// Kept in $GLOBALS, not a function static: a persistent worker (Velocity) clears
+	// $GLOBALS per request but never a static, which would reuse one nonce forever.
+	if (empty($GLOBALS["AdminNeoCspNonce"])) {
+		$GLOBALS["AdminNeoCspNonce"] = Random::strongKey();
 	}
 
-	return $nonce;
+	return $GLOBALS["AdminNeoCspNonce"];
 }
 
 /**
