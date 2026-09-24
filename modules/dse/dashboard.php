@@ -300,6 +300,16 @@ unset( $_ezServer, $_ezDb, $_ezUser, $_ezPassword );
 // buffer is active, and functions.inc.php calls ob_flush() in streaming paths.
 // We pre-start TWO levels so AdminNeo's own ob_start() is a no-op (ob_get_level
 // is already >0), and then drain all levels with a loop after the include.
+// AdminNeo can run once per process: it defines constants (server, database,
+// URLs) from the request and declares driver functions per request, and a
+// second include in the same process dies redeclaring its classes. Under
+// Exponential Velocity a worker serves many requests, so ask for this one to
+// be replaced after it answers; the next DSE request gets a fresh worker.
+if ( class_exists( 'Q_WebServer_Pool', false ) && method_exists( 'Q_WebServer_Pool', 'retireAfterResponse' ) )
+{
+    Q_WebServer_Pool::retireAfterResponse( 'AdminNeo defines request constants and can run once per process' );
+}
+
 $_neoObLevel = ob_get_level();
 ob_start();
 ob_start(); // second level so design.inc.php's guard doesn't add a third
