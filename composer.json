@@ -1,6 +1,6 @@
 {
     "name": "se7enxweb/sevenx_dse",
-    "description": "sevenx_dse : 7x Database Source Editor — embeds AdminNeo as a direct database source editor inside the eZ Publish / Exponential Platform Legacy admin UI — providing raw SQL, table browsing, import/export, and multi-driver support (MySQL, SQLite) through a scoped, permission-gated interface.",
+    "description": "sevenx_dse : 7x Database Source Editor — embeds AdminNeo as a direct database source editor inside the Exponential Platform Legacy admin UI — providing raw SQL, table browsing, import/export, and multi-driver support (MySQL, SQLite) through a scoped, permission-gated interface.",
     "keywords": [ "eZ Publish", "eZ Publish Legacy", "Exponential Platform", "database editor", "adminneo", "adminer", "database management", "sql","extension", "module", "view", "mysql", "sqlite", "postgresql" ],
     "homepage": "https://github.com/se7enxweb/sevenx_dse",
     "license": "GPL-2.0-or-later",
