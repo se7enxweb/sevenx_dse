@@ -62,14 +62,26 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // ── Feature flags ─────────────────────────────────────────────────────────
         // Set to false to skip the AdminNeo login screen and auto-authenticate using
         // credentials from site.ini (useful once the tool is trusted on this install).
-        define( 'DSE_SHOW_LOGIN', true );
+        // A persistent worker (Velocity) serves the gate many times: define once.
+        if ( !defined( 'DSE_SHOW_LOGIN' ) )
+            define( 'DSE_SHOW_LOGIN', true );
         // Controls login form password pre-fill. Reads InsecureUse from sevenx_dse.ini
         // [DSESettings]. Defaults to disabled; set InsecureUse=enabled only in trusted
         // development environments (exposes the DB password in browser form source).
         $_dseIni = \eZINI::instance( 'dse.ini' );
-        define( 'DSE_PREFILL_PASSWORD', $_dseIni->hasVariable( 'DSESettings', 'InsecureUse' )
+        if ( !defined( 'DSE_PREFILL_PASSWORD' ) )
+            define( 'DSE_PREFILL_PASSWORD', $_dseIni->hasVariable( 'DSESettings', 'InsecureUse' )
             && strtolower( $_dseIni->variable( 'DSESettings', 'InsecureUse' ) ) === 'enabled' );
         unset( $_dseIni );
+
+        // AdminNeo picks its language from its cookie, its session or Accept-Language, and otherwise takes the
+        // first of its translations (Arabic). Without any of them, use the administration's own language.
+        if ( empty( $_COOKIE['neo_lang'] ) && empty( $_SESSION['lang'] ) && empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) )
+        {
+            $_dseLocale = \eZLocale::instance();
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = (string)$_dseLocale->httpLocaleCode() . ', ' . (string)$_dseLocale->languageCode() . ';q=0.9, en;q=0.5';
+            unset( $_dseLocale );
+        }
         // ── End feature flags ─────────────────────────────────────────────────────
 
         // Work around max_input_vars: PHP truncates $_POST at this limit before any
@@ -210,31 +222,20 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             } else {
                 unset( $_SESSION['dse_ack'] );
 
-                $_selfUrl = htmlspecialchars(
-                    preg_replace( '~\?.*~', '', $_SERVER['REQUEST_URI'] )
-                    . ( !empty( $_SERVER['QUERY_STRING'] ) ? '?' . $_SERVER['QUERY_STRING'] : '' ),
-                    ENT_QUOTES
-                );
-                $_backUrl = htmlspecialchars( \eZSys::wwwDir() ?: '/', ENT_QUOTES );
-
-                $_warningHtml = '<div style="max-width:640px;margin:40px auto;padding:32px 36px;background:#fff8f0;border:2px solid #e06000;border-radius:6px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.6;color:#333">'
-                    . '<h2 style="margin:0 0 16px;font-size:20px;color:#c04000;font-weight:600">&#9888; Direct Database Access &mdash; Stop and Read This</h2>'
-                    . '<p style="margin:0 0 12px"><strong>This tool provides raw, unrestricted access to the live database.</strong><br>'
-                    . 'Mistakes made here &mdash; dropped tables, deleted rows, corrupted data &mdash; are <strong>immediate and irreversible</strong>.</p>'
-                    . '<p style="margin:0 0 12px">Use of this tool <strong>voids all warranty and support</strong> for the affected installation. You take full responsibility for any changes made.</p>'
-                    . '<p style="margin:0 0 24px;padding:12px 16px;background:#fff3e0;border-left:4px solid #e06000;border-radius:3px">'
-                    . '<strong>We strongly urge you to stop now and take a complete backup (database + files) before proceeding.</strong><br>'
-                    . 'Do not continue unless a verified backup exists.</p>'
-                    . '<form method="post" action="' . $_selfUrl . '" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">'
-                    . '<input type="hidden" name="dse_ack_warning" value="1">'
-                    . '<button type="submit" style="padding:10px 22px;background:#c04000;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer">'
-                    . 'I have taken a full backup and accept full responsibility &mdash; Proceed</button>'
-                    . '<a href="' . $_backUrl . '" style="padding:10px 16px;color:#555;text-decoration:none;font-size:13px">&larr; Cancel and go back</a>'
-                    . '</form></div>';
+                // The dashboard: what the editor does, what it will connect to, the safety rules and the
+                // acknowledgement form (design:dse/gate.tpl). Its HTML is also handed over as neo_body, so an
+                // override of dse/dashboard.tpl that prints neo_body still shows a working gate.
+                $_selfUrl = preg_replace( '~\?.*~', '', $_SERVER['REQUEST_URI'] )
+                    . ( !empty( $_SERVER['QUERY_STRING'] ) ? '?' . $_SERVER['QUERY_STRING'] : '' );
 
                 $tpl = \eZTemplate::factory();
-                $tpl->setVariable( 'neo_body', $_warningHtml );
-                unset( $_warningHtml, $_selfUrl, $_backUrl, $_neoIsNavRequest, $_dseHadDriverKey );
+                $tpl->setVariable( 'dse_gate', true );
+                $tpl->setVariable( 'dse_self_url', $_selfUrl );
+                $tpl->setVariable( 'dse_info', self::describe( $adminNeoDir ) );
+                $tpl->setVariable( 'dse_remembered_servers', self::rememberedServers( isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null ) );
+                $tpl->setVariable( 'dse_prefill_password', DSE_PREFILL_PASSWORD );
+                $tpl->setVariable( 'neo_body', $tpl->fetch( 'design:dse/gate.tpl' ) );
+                unset( $_selfUrl, $_neoIsNavRequest, $_dseHadDriverKey );
 
                 $Result            = array();
                 $Result['content'] = $tpl->fetch( 'design:dse/dashboard.tpl' );
@@ -460,6 +461,83 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         );
 
         return $this->viewResult( isset( $Result ) ? $Result : null, null );
+    }
+
+    /**
+     * What the dashboard says about the site's database and the editor. No credentials: the driver, the
+     * database's name (a file name for SQLite), whether a server is named, the server version, the table count.
+     *
+     * @param string|false $adminNeoDir
+     * @return array
+     */
+    public static function describe( $adminNeoDir )
+    {
+        $ini = \eZINI::instance( 'site.ini' );
+        $info = array(
+            'implementation' => (string)$ini->variable( 'DatabaseSettings', 'DatabaseImplementation' ),
+            'database'       => basename( (string)$ini->variable( 'DatabaseSettings', 'Database' ) ),
+            'has_server'     => trim( (string)$ini->variable( 'DatabaseSettings', 'Server' ) ) !== '',
+            'driver'         => '',
+            'version'        => '',
+            'tables'         => 0,
+            'kernel_tables'  => 0,
+            'adminneo'       => self::adminNeoVersion( $adminNeoDir ),
+            'drivers'        => self::drivers( $adminNeoDir ),
+        );
+        try
+        {
+            $db = \eZDB::instance();
+            $info['driver'] = (string)$db->databaseName();
+            $version = $db->databaseServerVersion();
+            $info['version'] = is_array( $version ) && isset( $version['string'] ) ? (string)$version['string'] : '';
+            $tables = $db->eZTableList();
+            if ( is_array( $tables ) )
+            {
+                $info['tables'] = count( $tables );
+                foreach ( array_keys( $tables ) as $name )
+                    if ( strpos( (string)$name, 'ez' ) === 0 )
+                        $info['kernel_tables']++;
+            }
+        }
+        catch ( \Throwable $e )
+        {
+            // the dashboard still explains the editor without these figures
+        }
+        return $info;
+    }
+
+    /** @return string AdminNeo's version from its version file, without running it */
+    public static function adminNeoVersion( $adminNeoDir )
+    {
+        $file = $adminNeoDir ? $adminNeoDir . '/include/version.inc.php' : '';
+        if ( $file === '' || !is_readable( $file ) )
+            return '';
+        return preg_match( '~const\s+VERSION\s*=\s*["\']([^"\']+)["\']~', (string)file_get_contents( $file ), $m ) ? $m[1] : '';
+    }
+
+    /** @return string[] the database drivers AdminNeo ships, by file name */
+    public static function drivers( $adminNeoDir )
+    {
+        $drivers = array();
+        foreach ( $adminNeoDir ? (array)glob( $adminNeoDir . '/drivers/*.inc.php' ) : array() as $file )
+            $drivers[] = basename( $file, '.inc.php' );
+        sort( $drivers );
+        return $drivers;
+    }
+
+    /**
+     * How many server logins AdminNeo remembers in this session ($_SESSION['pwds'][driver][server][user]).
+     * Counts only; nothing of the logins leaves this method.
+     */
+    public static function rememberedServers( $pwds )
+    {
+        $count = 0;
+        if ( is_array( $pwds ) )
+            foreach ( $pwds as $servers )
+                if ( is_array( $servers ) )
+                    foreach ( $servers as $users )
+                        $count += is_array( $users ) ? count( $users ) : 0;
+        return $count;
     }
 }
 

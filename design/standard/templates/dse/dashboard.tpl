@@ -1,3 +1,8 @@
+{* dse/dashboard. Before the editor opens (dse_gate) the dashboard of dse/gate.tpl, already rendered into neo_body,
+   is shown without AdminNeo's styles and scripts; after it, AdminNeo's page in neo_body with its assets. *}
+{if is_set( $dse_gate )}
+{$neo_body}
+{else}
 <link rel="stylesheet" href="/extension/sevenx_dse/design/standard/stylesheets/adminneo/default-blue.css">
 <link rel="stylesheet" href="/extension/sevenx_dse/design/standard/stylesheets/adminneo/jush.css">
 <link rel="stylesheet" href="/extension/sevenx_dse/design/standard/stylesheets/adminneo/jush-dark.css">
@@ -37,7 +42,8 @@
 }
 
 /* 1b. Restore body background (AdminNeo's body rule removed; restore eZ value) */
-body { background: url('/design/admin3/images/3/dark_back.png') !important; }
+/* not under admin4 (html[data-a4-theme]), whose page has a background of its own */
+html:not([data-a4-theme]) body { background: url('/design/admin3/images/3/dark_back.png') !important; }
 
 .leftmenu-items {
     font-size: 1.05em;
@@ -249,3 +255,4 @@ div#leftmenu-design ul.leftmenu-items li.current div a {
 {/literal}
 
 {$neo_body}
+{/if}

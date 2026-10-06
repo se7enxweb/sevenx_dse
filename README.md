@@ -99,6 +99,21 @@ sevenx_dse is a direct database source editor for Exponential Platform Legacy. I
 /dse/dashboard
 ```
 
+### The dashboard
+
+Opening `/dse/dashboard` from the menu shows the dashboard first, in the look of the other Exponential
+administration pages (light and dark): what the editor does, the warning, the site's database (type, name, table
+count, server version, AdminNeo version; never credentials), what can be done with it, how it is kept safe (the
+policy, the login, SQLite paths, remembered logins, a warning when `dse.ini [DSESettings] InsecureUse` is enabled),
+and the acknowledgement that opens AdminNeo. Nothing connects before that.
+
+- Template: `design/standard/templates/dse/gate.tpl` with its styles in `dse/exp_style.tpl`; `dse/dashboard.tpl`
+  prints it without AdminNeo's styles and scripts. An override of `dse/dashboard.tpl` that prints `$neo_body` still
+  shows a working dashboard.
+- The form posts `dse_ack_warning=1` to the same address, as before.
+- When the browser sends no language and none was chosen in AdminNeo, AdminNeo uses the administration's language
+  instead of its first translation.
+
 ---
 
 ## Technology Stack
