@@ -442,7 +442,7 @@ if (isset($_GET["mssql"])) {
 	 */
 	function contains_unicode(string $string): bool
 	{
-		return strlen($string) != strlen(utf8_decode($string));
+		return strlen($string) != mb_strlen($string, "UTF-8");
 	}
 
 	function idf_escape($idf) {
