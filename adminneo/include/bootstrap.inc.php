@@ -36,6 +36,9 @@ include __DIR__ . "/../core/Config.php";
 include __DIR__ . "/../core/Settings.php";
 include __DIR__ . "/../core/Hash.php";
 include __DIR__ . "/../core/Random.php";
+if (!class_exists("AdminNeo\\FileModes", false)) {
+	include __DIR__ . "/../core/FileModes.php";
+}
 include __DIR__ . "/polyfill.inc.php";
 include __DIR__ . "/functions.inc.php";
 include __DIR__ . "/html.inc.php";

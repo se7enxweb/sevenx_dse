@@ -21,9 +21,11 @@ $outputDirs  = [
     'img' => $designDir . '/images/adminneo',
 ];
 
+require_once $adminNeoDir . '/core/FileModes.php';
+
 foreach ( $outputDirs as $dir ) {
     if ( !is_dir( $dir ) ) {
-        mkdir( $dir, 0755, true );
+        FileModes::mkdir( $dir, 0755, true );
         echo "Created: $dir\n";
     }
 }
