@@ -293,7 +293,9 @@ if (!isset($_GET["import"])) {
 	}
 	echo "<p>";
 	textarea("query", $q, 20);
-	echo script(($_POST ? "" : "qs('textarea').focus();\n") . "gid('form').onsubmit = partial(sqlSubmit, gid('form'), '" . js_escape(remove_from_uri("sql|limit|error_stops|only_errors|history")) . "');");
+	// sevenx_dse: embedded in the administration (NEO_BASE_URL) the form is only posted. sqlSubmit() would put the
+	// statement into the address, which the administration keeps in view parameters, never in a query string.
+	echo script(($_POST ? "" : "qs('textarea').focus();\n") . (defined('NEO_BASE_URL') ? "" : "gid('form').onsubmit = partial(sqlSubmit, gid('form'), '" . js_escape(remove_from_uri("sql|limit|error_stops|only_errors|history")) . "');"));
 	echo "</p>";
 
 	echo "<p><input type='submit' class='button default' value='" . lang('Execute') . "' title='Ctrl+Enter'>";

@@ -128,6 +128,46 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             }
         }
 
+        // ── View parameters ───────────────────────────────────────────────────────
+        // The editor's state is in view parameters (/dse/dashboard/(sqlite)/main/(db)/~dmFy...), never in a query
+        // string (sevenxDseViewParameters). AdminNeo keeps its state in $_GET and prints query-string links, so the
+        // boundary is here: $_GET, QUERY_STRING and REQUEST_URI are filled from the view parameters before AdminNeo
+        // runs, and its links, forms and redirects are rewritten to view parameters after it.
+        if ( !class_exists( 'sevenxDseViewParameters', false ) ) {
+            require_once dirname( $this->scriptFile() ) . '/../../classes/sevenxdseviewparameters.php';
+        }
+        list( $_dseBase, $_dsePath, $_dseQuery ) = \sevenxDseViewParameters::splitRequest( $_SERVER['REQUEST_URI'] ?? '' );
+        $_dseTail = false;
+        $_dseParams = \sevenxDseViewParameters::fromPath( $_dsePath, $_dseTail );
+        if ( $_dseQuery !== '' ) {
+            parse_str( $_dseQuery, $_dseFromQuery );
+            $_dseParams = array_replace( $_dseParams, $_dseFromQuery );
+            unset( $_dseFromQuery );
+        }
+        $_dseMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $_dseIsAjax = strtolower( (string)( $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '' ) ) === 'xmlhttprequest';
+        // A form AdminNeo sends with GET (search, filter, database selector) is posted (rewriteHtml()): its fields are
+        // the parameters of the page it asks for, which the browser is sent to.
+        if ( $_dseMethod === 'POST' && isset( $_POST[\sevenxDseViewParameters::GET_FORM] ) ) {
+            $_dseFields = $_POST;
+            unset( $_dseFields[\sevenxDseViewParameters::GET_FORM] );
+            header( 'Location: ' . $_dseBase . \sevenxDseViewParameters::pairsToPath( \sevenxDseViewParameters::flatten( $_dseFields ) ) );
+            \eZExecution::setCleanExit();
+            exit;
+        }
+        // An address with a query string, or with parameters a script appended ("&page=2"), opened in the browser: the
+        // same page at its view-parameter address. Background requests of AdminNeo's scripts are answered directly.
+        if ( $_dseMethod === 'GET' && !$_dseIsAjax && ( $_dseQuery !== '' || $_dseTail ) ) {
+            header( 'Location: ' . $_dseBase . \sevenxDseViewParameters::pairsToPath( \sevenxDseViewParameters::flatten( $_dseParams ) ) );
+            \eZExecution::setCleanExit();
+            exit;
+        }
+        $_GET = $_dseParams;
+        $_SERVER['QUERY_STRING'] = http_build_query( $_dseParams );
+        $_SERVER['REQUEST_URI'] = $_dseBase . ( $_SERVER['QUERY_STRING'] !== '' ? '?' . $_SERVER['QUERY_STRING'] : '' );
+        unset( $_dsePath, $_dseQuery, $_dseTail, $_dseParams, $_dseMethod, $_dseIsAjax );
+        // ── End view parameters ───────────────────────────────────────────────────
+
         // Set $_GET['mysql'] to the server key so AdminNeo's SERVER constant resolves.
         // This must match the key used in adminneo-config.php servers[] (the hostname).
         // Only set on the initial page request — not if the user navigated elsewhere.
@@ -154,9 +194,10 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         $_dseHadDriverKey = (bool) array_intersect( array_keys( $_dseRawParams ), $_dseDriverKeys );
         unset( $_dseRawParams, $_dseDriverKeys );
 
-        // The main database of the installation (site.ini [DatabaseSettings] of this siteaccess), AdminNeo's one
-        // configured server (adminneo/adminneo-config.php): its engine is the only one offered, its login comes from
-        // the INI. null only when AdminNeo has no driver for the engine; then the free-form login form is shown.
+        // The main database of the installation (site.ini [DatabaseSettings] of this siteaccess), opened with one click
+        // from the dashboard: AdminNeo's configured server "main" (adminneo/adminneo-config.php), its login from the
+        // INI. Any other database is reached through AdminNeo's own login form with every driver. null when AdminNeo
+        // has no driver for the site's engine.
         if ( !class_exists( 'sevenxDseMainDatabase', false ) ) {
             require_once dirname( $this->scriptFile() ) . '/../../classes/sevenxdsemaindatabase.php';
         }
@@ -245,16 +286,15 @@ class Dashboard extends \Exponential\Runnable\ModuleView
                 // The dashboard: what the editor does, what it will connect to, the safety rules and the
                 // acknowledgement form (design:dse/gate.tpl). Its HTML is also handed over as neo_body, so an
                 // override of dse/dashboard.tpl that prints neo_body still shows a working gate.
-                $_selfUrl = preg_replace( '~\?.*~', '', $_SERVER['REQUEST_URI'] )
-                    . ( !empty( $_SERVER['QUERY_STRING'] ) ? '?' . $_SERVER['QUERY_STRING'] : '' );
+                $_selfUrl = $_dseBase . \sevenxDseViewParameters::pairsToPath( \sevenxDseViewParameters::flatten( $_GET ) );
 
                 $tpl = \eZTemplate::factory();
                 $tpl->setVariable( 'dse_gate', true );
                 $tpl->setVariable( 'dse_self_url', $_selfUrl );
                 $tpl->setVariable( 'dse_info', self::describe( $adminNeoDir ) );
-                $tpl->setVariable( 'dse_remembered_servers', $_dseMain !== null ? 0 : self::rememberedServers( isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null ) );
-                $tpl->setVariable( 'dse_prefill_password', DSE_PREFILL_PASSWORD && $_dseMain === null );
-                $tpl->setVariable( 'dse_main_only', $_dseMain !== null );
+                $tpl->setVariable( 'dse_remembered_servers', self::rememberedServers( isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null ) );
+                $tpl->setVariable( 'dse_prefill_password', DSE_PREFILL_PASSWORD );
+                $tpl->setVariable( 'dse_has_main', $_dseMain !== null );
                 $tpl->setVariable( 'neo_body', $tpl->fetch( 'design:dse/gate.tpl' ) );
                 unset( $_selfUrl, $_neoIsNavRequest, $_dseHadDriverKey );
 
@@ -276,9 +316,12 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // Ack POST: preserve pwds (server list survives), set one-time bypass token,
         // redirect to bare /dse/dashboard. AdminNeo renders its server-picker showing
         // all previously-authenticated servers — no auto-connect, no driver key.
-        // With the site's main database configured, the acknowledgement connects to it straight away: it is handed to
-        // AdminNeo as its login form for that server (no login typed in), and AdminNeo redirects to the database.
-        if ( isset( $_POST['dse_ack_warning'] ) && $_dseMain !== null ) {
+        // "Open the database of this site" (dse_connect=main, the default) connects to the main database straight away:
+        // it is handed to AdminNeo as its login form for that server (no login typed in), and AdminNeo redirects to
+        // the database. "Connect to another database" (dse_connect=other) goes on as before: AdminNeo's login form
+        // with every driver, the free-form server, login and database, and the logins remembered in this session.
+        if ( isset( $_POST['dse_ack_warning'] ) && $_dseMain !== null
+            && ( !isset( $_POST['dse_connect'] ) || $_POST['dse_connect'] !== 'other' ) ) {
             $_SESSION['dse_ack'] = true;
             $_POST = array( 'auth' => self::mainDatabaseLogin( $_dseMain ) );
         }
@@ -341,8 +384,8 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         }
         // Make the eZ password available to the login form pre-fill (in-request only, not in URL/session).
         // Only active when DSE_SHOW_LOGIN=true AND DSE_PREFILL_PASSWORD=true (opt-in, off by default).
-        // Never with the main database configured: its login is not in the form at all.
-        if ( DSE_SHOW_LOGIN && DSE_PREFILL_PASSWORD && $_dseMain === null && !defined( 'DSE_DEFAULT_PASSWORD' ) ) {
+        // Only AdminNeo's free-form login form uses it; the configured main database never shows a login field.
+        if ( DSE_SHOW_LOGIN && DSE_PREFILL_PASSWORD && !defined( 'DSE_DEFAULT_PASSWORD' ) ) {
             define( 'DSE_DEFAULT_PASSWORD', $_ezPassword );
         }
         // Pre-compute the bcrypt hash from the known-good password HERE in dashboard.php
@@ -374,10 +417,11 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         }
         unset( $_neoObLevel );
 
-        // If AdminNeo issued a Location redirect, pass it through immediately.
-        // sqlite= values are always relative paths — no rewriting needed.
+        // If AdminNeo issued a Location redirect, pass it through immediately, at its view-parameter address.
         foreach ( headers_list() as $_h ) {
             if ( stripos( $_h, 'Location:' ) === 0 ) {
+                $_dseLocation = trim( substr( $_h, strlen( 'Location:' ) ) );
+                header( 'Location: ' . \sevenxDseViewParameters::rewriteLocation( $_dseLocation, $_dseBase ), true );
                 \eZExecution::setCleanExit();
                 exit;
             }
@@ -388,9 +432,11 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // non-HTML content type (CSV, SQL, JSON export etc.), output the raw body
         // directly and exit — do NOT wrap it in the eZ template.
         $_neoIsDownload = false;
+        $_neoIsAttachment = false;
         foreach ( headers_list() as $_h ) {
             if ( stripos( $_h, 'Content-Disposition:' ) === 0 && stripos( $_h, 'attachment' ) !== false ) {
                 $_neoIsDownload = true;
+                $_neoIsAttachment = true;
                 break;
             }
             if ( stripos( $_h, 'Content-Type:' ) === 0
@@ -402,6 +448,10 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         }
         unset( $_h );
         if ( $_neoIsDownload ) {
+            // An answer to one of AdminNeo's scripts (JSON) can carry links; a file download is sent as it is.
+            if ( !$_neoIsAttachment && preg_match( '~^Content-Type:\s*application/json~mi', implode( "\n", headers_list() ) ) ) {
+                $_neoHtml = \sevenxDseViewParameters::rewriteHtml( $_neoHtml, $_dseBase );
+            }
             echo $_neoHtml;
             \eZExecution::setCleanExit();
             exit;
@@ -414,7 +464,9 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // tokens), not through inline styles: the page follows admin4's light and dark mode.
         // The footer of the navigation panel gets the link back to the gate ("Change database").
         $_dseDashBase = rtrim( preg_replace( '~\?.*~', '', $_SERVER['REQUEST_URI'] ), '/' );
-        $_dseSwitchUrl = $_dseDashBase . '?dse_switch=' . urlencode( $_SESSION['dse_switch_token'] );
+        $_dseSwitchUrl = $_dseDashBase . '/(dse_switch)/' . \sevenxDseViewParameters::encodeValue( $_SESSION['dse_switch_token'] );
+        // AdminNeo's links, form actions, script addresses and GET forms, at view-parameter addresses.
+        $_neoHtml = \sevenxDseViewParameters::rewriteHtml( $_neoHtml, $_dseBase );
         $_dseChangeLink = '<a class="a4-dse-switch" href="' . htmlspecialchars( $_dseSwitchUrl, ENT_QUOTES ) . '" title="'
             . htmlspecialchars( \ezpI18n::tr( 'extension/sevenx_dse', 'Return to the database selector' ), ENT_QUOTES ) . '">'
             . '<span aria-hidden="true">&#8635;</span> '

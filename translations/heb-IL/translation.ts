@@ -187,12 +187,20 @@
         <translation>ביטול וחזרה</translation>
     </message>
     <message>
-        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
-        <translation>העורך פותח את מסד הנתונים שעליו האתר הזה פועל, עם פרטי ההתחברות מההגדרות שלו (site.ini [DatabaseSettings]); פרטי ההתחברות לעולם אינם מוקלדים או מוצגים. מוצע רק המנוע שלו, %engine: האתר אינו משתמש באף מנוע אחר, וחיבור שמוקלד ידנית עלול להגיע למסד נתונים שאינו שייך לאתר.</translation>
-    </message>
-    <message>
         <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
         <translation>העורך מתחבר עם פרטי ההתחברות של מסד הנתונים של האתר מתוך site.ini. הם אינם מוקלדים, אינם נכתבים לשום טופס ואינם מוצגים.</translation>
+    </message>
+    <message>
+        <source>With one click the editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); that login is never typed in or shown.</source>
+        <translation>בלחיצה אחת העורך פותח את מסד הנתונים שעליו האתר הזה פועל, עם פרטי ההתחברות מההגדרות שלו (site.ini [DatabaseSettings]); פרטי התחברות אלה לעולם אינם מוקלדים או מוצגים.</translation>
+    </message>
+    <message>
+        <source>Open the database of this site</source>
+        <translation>פתיחת מסד הנתונים של האתר הזה</translation>
+    </message>
+    <message>
+        <source>Connect to another database</source>
+        <translation>התחברות למסד נתונים אחר</translation>
     </message>
 </context>
 </TS>

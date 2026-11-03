@@ -185,12 +185,20 @@
         <translation>İptal et ve geri dön</translation>
     </message>
     <message>
-        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
-        <translation>Düzenleyici, bu sitenin çalıştığı veritabanını ayarlarındaki oturum bilgileriyle (site.ini [DatabaseSettings]) açar; oturum bilgileri hiçbir zaman yazılmaz veya gösterilmez. Yalnızca onun veritabanı sistemi, %engine, sunulur: site başka bir sistem kullanmaz ve elle yazılan bir bağlantı siteye ait olmayan bir veritabanına ulaşabilir.</translation>
-    </message>
-    <message>
         <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
         <translation>Düzenleyici, site.ini&apos;deki site veritabanının oturum bilgileriyle oturum açar. Bunlar yazılmaz, hiçbir forma konmaz ve gösterilmez.</translation>
+    </message>
+    <message>
+        <source>With one click the editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); that login is never typed in or shown.</source>
+        <translation>Tek tıklamayla düzenleyici, bu sitenin çalıştığı veritabanını ayarlarındaki oturum bilgileriyle (site.ini [DatabaseSettings]) açar; bu oturum bilgileri hiçbir zaman yazılmaz veya gösterilmez.</translation>
+    </message>
+    <message>
+        <source>Open the database of this site</source>
+        <translation>Bu sitenin veritabanını aç</translation>
+    </message>
+    <message>
+        <source>Connect to another database</source>
+        <translation>Başka bir veritabanına bağlan</translation>
     </message>
 </context>
 </TS>

@@ -1,10 +1,11 @@
 <?php
 /**
  * The database the DS Editor opens: the main database of the installation, read from site.ini [DatabaseSettings]
- * of the current siteaccess the way eZDB::instance() reads it, as AdminNeo's one configured server.
+ * of the current siteaccess the way eZDB::instance() reads it, as AdminNeo's configured server "main".
  *
- * - The connection type is the engine of that database (SQLite, MySQL/MariaDB, PostgreSQL, ...). The editor offers
- *   no other: AdminNeo is configured with this one server, so it shows no driver list and no free-form server.
+ * - The connection type is the engine of that database (SQLite, MySQL/MariaDB, PostgreSQL, ...). The dashboard opens
+ *   it with one click. Requests about "main" (isRequested()) see it as AdminNeo's one server; every other request
+ *   gets AdminNeo's free-form login form with every driver, so any other database can be opened as before.
  * - The login (server, port or socket, user, password, database) comes from the INI. It is never typed in, never
  *   written into a form and never shown; only the server key "main" travels in the URL.
  * - An SQLite database named without a path lives in var/storage/sqlite3/ (eZSQLite3DB::filePath()); the editor gets
@@ -116,6 +117,27 @@ class sevenxDseMainDatabase
         }
         $server['name'] = $label !== '' ? $label : self::engineName( $driver ) . ' - ' . basename( $database );
         return $server;
+    }
+
+    /**
+     * Whether a request of the editor is about the main database: its server key in the driver parameter
+     * (sqlite=main, mysql=main ...) or in a login form (auth[server]=main). Only then is "main" AdminNeo's configured
+     * server; every other request gets AdminNeo's free-form login form with every driver.
+     *
+     * @param array $get $_GET
+     * @param array $post $_POST
+     * @return bool
+     */
+    public static function isRequested( array $get, array $post )
+    {
+        if ( isset( $post['auth'] ) && is_array( $post['auth'] ) )
+            return isset( $post['auth']['server'] ) && $post['auth']['server'] === self::SERVER_KEY;
+        foreach ( array( 'sqlite', 'mysql', 'pgsql', 'oracle', 'mssql', 'mongo', 'elastic', 'clickhouse', 'simpledb' ) as $driver )
+        {
+            if ( isset( $get[$driver] ) && $get[$driver] === self::SERVER_KEY )
+                return true;
+        }
+        return false;
     }
 
     /**

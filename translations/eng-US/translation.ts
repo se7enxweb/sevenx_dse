@@ -185,12 +185,20 @@
         <translation>Cancel and go back</translation>
     </message>
     <message>
-        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
-        <translation>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</translation>
-    </message>
-    <message>
         <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
         <translation>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</translation>
+    </message>
+    <message>
+        <source>With one click the editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); that login is never typed in or shown.</source>
+        <translation>With one click the editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); that login is never typed in or shown.</translation>
+    </message>
+    <message>
+        <source>Open the database of this site</source>
+        <translation>Open the database of this site</translation>
+    </message>
+    <message>
+        <source>Connect to another database</source>
+        <translation>Connect to another database</translation>
     </message>
 </context>
 </TS>

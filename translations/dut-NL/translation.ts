@@ -185,12 +185,20 @@
         <translation>Annuleren en teruggaan</translation>
     </message>
     <message>
-        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
-        <translation>De editor opent de database waarop deze site draait, met de aanmelding uit de instellingen (site.ini [DatabaseSettings]); de aanmelding wordt nooit ingetypt of getoond. Alleen het databasesysteem ervan, %engine, wordt aangeboden: de site gebruikt geen ander, en een met de hand ingetypte verbinding zou een database kunnen bereiken die niet bij de site hoort.</translation>
-    </message>
-    <message>
         <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
         <translation>De editor meldt zich aan met de aanmelding van de sitedatabase uit site.ini. Die wordt niet ingetypt, in geen enkel formulier geschreven en niet getoond.</translation>
+    </message>
+    <message>
+        <source>With one click the editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); that login is never typed in or shown.</source>
+        <translation>Met één klik opent de editor de database waarop deze site draait, met de aanmelding uit de instellingen (site.ini [DatabaseSettings]); die aanmelding wordt nooit ingetypt of getoond.</translation>
+    </message>
+    <message>
+        <source>Open the database of this site</source>
+        <translation>De database van deze site openen</translation>
+    </message>
+    <message>
+        <source>Connect to another database</source>
+        <translation>Verbinden met een andere database</translation>
     </message>
 </context>
 </TS>

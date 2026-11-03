@@ -5,17 +5,28 @@ All notable changes to sevenx_dse. Earlier releases are described on
 
 ## Unreleased
 
-- Updated: The editor opens the main database of the installation, read from `site.ini [DatabaseSettings]` of the
-  siteaccess the way the kernel reads it, as AdminNeo's one configured server (`classes/sevenxdsemaindatabase.php`).
-  Acknowledging the dashboard connects to it straight away. Its login comes from the INI and is never typed in,
-  written into a form or shown; only the server key `main` is in the URL. Only the engine the site runs on is
-  offered (SQLite only for an SQLite site, MySQL/MariaDB only for a MySQL site, and so on); the dashboard explains
-  why. Before, the login form preselected MySQL with every driver in its list, and an SQLite site showed no tables:
-  the form offered the bare `Database` value (`sqlite.db`), which the kernel finds in `var/storage/sqlite3/` but
-  the editor looked for in the installation root, so the file was refused (#16641).
+- Updated: The dashboard opens the main database of the installation with one click ("Open the database of this
+  site"), read from `site.ini [DatabaseSettings]` of the siteaccess the way the kernel reads it, as AdminNeo's
+  configured server `main` (`classes/sevenxdsemaindatabase.php`). Its login comes from the INI and is never typed in,
+  written into a form or shown; only the server key `main` is in the address. Before, the login form preselected
+  MySQL, and an SQLite site showed no tables: the form offered the bare `Database` value (`sqlite.db`), which the
+  kernel finds in `var/storage/sqlite3/` but the editor looked for in the installation root, so the file was
+  refused (#16641).
+- Updated: Any other database is opened as before: "Connect to another database" on the dashboard, and the "Change
+  database" link (`dse_switch`) of the editor, lead to AdminNeo's login form with every driver it has (MySQL/MariaDB,
+  PostgreSQL, SQLite, Oracle, MS SQL, MongoDB ... as far as their PHP extensions are loaded) and the free-form server,
+  login and database fields, or any SQLite file inside the site directory, with the logins remembered in the session.
+  `main` is AdminNeo's configured server only for requests about it. The first version of #16641 offered only the
+  site's engine and no other database; that restriction is gone.
+- Updated: The editor's state is in view parameters (`/dse/dashboard/(sqlite)/main/(db)/~dmFy...`), never in a query
+  string (`classes/sevenxdseviewparameters.php`): AdminNeo's links, form actions, script addresses and redirects are
+  rewritten, values that are not plain words travel base64url-encoded after `~`, parameters with bracketed names
+  (filters, columns) together in `(qs)`. AdminNeo's GET forms (search, filter, database selector) are posted and
+  redirected to their view-parameter address; an old `?key=` address is redirected the same way. The SQL command form
+  is only posted (it no longer puts the statement into the address). AdminNeo's background requests may append
+  `&page=2` or `&script=db` to the path, which is read as before.
 - Updated: SQLite: the table list and the database page leave out SQLite's own tables (`sqlite_sequence`,
   `sqlite_stat1` ...).
-- Updated: `dse.ini [DSESettings] InsecureUse` only applies when AdminNeo has no driver for the site's engine.
 
 ## 1.1.20 (2026-11-01)
 

@@ -3,10 +3,12 @@
  * AdminNeo configuration — loaded automatically by Origin::create(), with Exponential bootstrapped (dse/dashboard,
  * dse/adminneo).
  *
- * One server: the main database of the installation, read from site.ini [DatabaseSettings] of the current
- * siteaccess (sevenxDseMainDatabase). With a server list AdminNeo shows no driver list and no free-form server field,
- * so the editor offers only the engine the site runs on, and the login comes from the INI: it is never typed in,
- * never written into the form and never shown. Only the server key ("main") travels in the URL.
+ * The main database of the installation, read from site.ini [DatabaseSettings] of the current siteaccess
+ * (sevenxDseMainDatabase), is the server "main", which the dashboard opens with one click. A request about it
+ * (sevenxDseMainDatabase::isRequested(): sqlite=main, auth[server]=main ...) gets it as AdminNeo's one configured
+ * server: its login comes from the INI, is never typed in, never written into the form and never shown, and only the
+ * key "main" travels in the address. Every other request gets AdminNeo's free-form login form, with every driver
+ * AdminNeo has here and the server, login and database fields, so another server or SQLite file can be opened.
  *
  * defaultPasswordHash: SQLite has no login of its own. AdminNeo accepts an SQLite connection with an empty password
  * only when this is "" (and compares any other password with it), so it is the password of site.ini, normally empty
@@ -35,12 +37,13 @@ $_dseMain = sevenxDseMainDatabase::current(
 $_dseConfig = array(
     'defaultPasswordHash' => defined( 'DSE_SQLITE_HASH' ) ? \DSE_SQLITE_HASH
         : ( $_dseMain !== null && $_dseMain['driver'] === 'sqlite' ? (string)eZINI::instance( 'site.ini' )->variable( 'DatabaseSettings', 'Password' ) : null ),
+    // The free-form login form starts with the engine of the site; every other driver is in its list.
+    'defaultDriver'       => $_dseMain !== null ? $_dseMain['driver'] : 'mysql',
 );
-if ( $_dseMain !== null )
+if ( $_dseMain !== null && sevenxDseMainDatabase::isRequested( $_GET, $_POST ) )
 {
     $_dseConfig['servers'] = array( sevenxDseMainDatabase::SERVER_KEY => $_dseMain );
     $_dseConfig['defaultServer'] = sevenxDseMainDatabase::SERVER_KEY;
-    $_dseConfig['defaultDriver'] = $_dseMain['driver'];
 }
 unset( $_dseMain );
 

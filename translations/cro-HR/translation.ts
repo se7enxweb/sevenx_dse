@@ -185,12 +185,20 @@
         <translation>Odustani i vrati se</translation>
     </message>
     <message>
-        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
-        <translation>Uređivač otvara bazu podataka na kojoj radi ovo mjesto, s prijavom iz njegovih postavki (site.ini [DatabaseSettings]); prijava se nikada ne upisuje niti prikazuje. Nudi se samo njezin sustav, %engine: mjesto ne koristi nijedan drugi, a ručno upisana veza mogla bi doseći bazu podataka koja ne pripada mjestu.</translation>
-    </message>
-    <message>
         <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
         <translation>Uređivač se prijavljuje prijavom baze podataka mjesta iz site.ini. Ona se ne upisuje, ne zapisuje ni u jedan obrazac i ne prikazuje.</translation>
+    </message>
+    <message>
+        <source>With one click the editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); that login is never typed in or shown.</source>
+        <translation>Jednim klikom uređivač otvara bazu podataka na kojoj radi ovo mjesto, s prijavom iz njegovih postavki (site.ini [DatabaseSettings]); ta se prijava nikada ne upisuje niti prikazuje.</translation>
+    </message>
+    <message>
+        <source>Open the database of this site</source>
+        <translation>Otvori bazu podataka ovog mjesta</translation>
+    </message>
+    <message>
+        <source>Connect to another database</source>
+        <translation>Poveži se s drugom bazom podataka</translation>
     </message>
 </context>
 </TS>
