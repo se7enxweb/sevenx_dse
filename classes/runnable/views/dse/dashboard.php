@@ -521,7 +521,7 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             $_SESSION['dse_current'] = $_dseCurrent;
         }
         unset( $_dseCurrent );
-        // AdminNeo's "Logout" forgets every login of the session and then lands on the database chooser.
+        // AdminNeo's "Logout" forgets the login it signed out of and then lands on the database chooser.
         $_dseLogout = !empty( $_POST['logout'] );
 
         $_neoObLevel = ob_get_level();

@@ -199,7 +199,7 @@ These come with the extension and normally need no change:
    with one click, the logins remembered in this session (the current connection is marked "Connected now"), and
    AdminNeo's login form for another server or an SQLite file. An SQLite file is given as a path relative to the site
    directory, for example `var/storage/sqlite3/<name>.db`.
-6. **Logout** in AdminNeo forgets the database logins of your session and lands on the database chooser.
+6. **Logout** in AdminNeo forgets the database login you were signed in with and lands on the database chooser.
 
 ### Views
 
