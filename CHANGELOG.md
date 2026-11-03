@@ -3,6 +3,13 @@
 All notable changes to sevenx_dse. Earlier releases are described on
 <https://github.com/se7enxweb/sevenx_dse/releases>.
 
+## 1.1.23 (2026-11-03)
+
+- Updated: The editor no longer asks GitHub for a newer AdminNeo. AdminNeo's version check fetched api.github.com
+  from the administrator's browser, which the administration's Content-Security-Policy (connect-src) blocked and
+  reported on every dashboard visit. AdminNeo is updated with this extension, so the check is switched off
+  (versionVerification).
+
 ## 1.1.22 (2026-11-02)
 
 - Updated: "Change database" (`dse_switch`) opens the database chooser (`/dse/dashboard/(dse_choose)/1`) instead of
