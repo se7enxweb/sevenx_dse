@@ -39,6 +39,9 @@ $_dseConfig = array(
         : ( $_dseMain !== null && $_dseMain['driver'] === 'sqlite' ? (string)eZINI::instance( 'site.ini' )->variable( 'DatabaseSettings', 'Password' ) : null ),
     // The free-form login form starts with the engine of the site; every other driver is in its list.
     'defaultDriver'       => $_dseMain !== null ? $_dseMain['driver'] : 'mysql',
+    // No check for a newer AdminNeo: it is updated with this extension, and the check asked api.github.com from the
+    // administrator's browser, which the administration's Content-Security-Policy (connect-src) blocks and reports.
+    'versionVerification' => false,
 );
 if ( $_dseMain !== null && sevenxDseMainDatabase::isRequested( $_GET, $_POST ) )
 {
