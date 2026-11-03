@@ -449,8 +449,9 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         }
         unset( $_h );
         if ( $_neoIsDownload ) {
-            // An answer to one of AdminNeo's scripts (JSON) can carry links; a file download is sent as it is.
-            if ( !$_neoIsAttachment && preg_match( '~^Content-Type:\s*application/json~mi', implode( "\n", headers_list() ) ) ) {
+            // An answer to one of AdminNeo's scripts (JSON, sent as text/javascript) can carry links; a file download is
+            // sent as it is.
+            if ( !$_neoIsAttachment && preg_match( '~^Content-Type:\s*(application/json|text/javascript|application/javascript)~mi', implode( "\n", headers_list() ) ) ) {
                 $_neoHtml = \sevenxDseViewParameters::rewriteHtml( $_neoHtml, $_dseBase );
             }
             echo $_neoHtml;
