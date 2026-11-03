@@ -3,7 +3,7 @@
 All notable changes to sevenx_dse. Earlier releases are described on
 <https://github.com/se7enxweb/sevenx_dse/releases>.
 
-## Unreleased
+## 1.1.21 (2026-11-02)
 
 - Updated: The dashboard opens the main database of the installation with one click ("Open the database of this
   site"), read from `site.ini [DatabaseSettings]` of the siteaccess the way the kernel reads it, as AdminNeo's
