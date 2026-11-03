@@ -150,7 +150,8 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // the parameters of the page it asks for, which the browser is sent to.
         if ( $_dseMethod === 'POST' && isset( $_POST[\sevenxDseViewParameters::GET_FORM] ) ) {
             $_dseFields = $_POST;
-            unset( $_dseFields[\sevenxDseViewParameters::GET_FORM] );
+            // the form token (ezformtoken adds it to every POST form) is checked already and is not a page parameter
+            unset( $_dseFields[\sevenxDseViewParameters::GET_FORM], $_dseFields['ezxform_token'] );
             header( 'Location: ' . $_dseBase . \sevenxDseViewParameters::pairsToPath( \sevenxDseViewParameters::flatten( $_dseFields ) ) );
             \eZExecution::setCleanExit();
             exit;
