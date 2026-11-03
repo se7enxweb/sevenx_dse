@@ -3,7 +3,7 @@
 All notable changes to sevenx_dse. Earlier releases are described on
 <https://github.com/se7enxweb/sevenx_dse/releases>.
 
-## Unreleased
+## 1.1.22 (2026-11-02)
 
 - Updated: "Change database" (`dse_switch`) opens the database chooser (`/dse/dashboard/(dse_choose)/1`) instead of
   the dashboard's warning again, when the warning was confirmed in this session; without that confirmation the

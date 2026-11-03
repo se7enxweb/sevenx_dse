@@ -10,7 +10,7 @@ class sevenx_dseInfo
     {
         return array(
             'Name'      => '<a href="https://github.com/se7enxweb/sevenx_dse">sevenx_dse : 7x Database Source Editor</a>',
-            'Version'   => "1.1.21",
+            'Version'   => "1.1.22",
             'Author'    => '7x',
             'Copyright' => 'Copyright (C) 1998 - 2026 Exponential Foundation and 7x. All rights reserved.',
             'License'   => "GNU General Public License v2.0 (or any later version)",
