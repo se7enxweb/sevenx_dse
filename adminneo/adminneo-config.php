@@ -1,37 +1,47 @@
 <?php
 /**
- * AdminNeo configuration — loaded automatically by Origin::create().
+ * AdminNeo configuration — loaded automatically by Origin::create(), with Exponential bootstrapped (dse/dashboard,
+ * dse/adminneo).
  *
- * eZ Publish is already bootstrapped when this runs (called via dashboard.php),
- * so eZINI::instance() is available to read the database credentials from
- * site.ini without duplicating them here in plain text.
+ * One server: the main database of the installation, read from site.ini [DatabaseSettings] of the current
+ * siteaccess (sevenxDseMainDatabase). With a server list AdminNeo shows no driver list and no free-form server field,
+ * so the editor offers only the engine the site runs on, and the login comes from the INI: it is never typed in,
+ * never written into the form and never shown. Only the server key ("main") travels in the URL.
  *
- * Returns the config array that AdminNeo's Config class consumes.
+ * defaultPasswordHash: SQLite has no login of its own. AdminNeo accepts an SQLite connection with an empty password
+ * only when this is "" (and compares any other password with it), so it is the password of site.ini, normally empty
+ * for SQLite. dse/dashboard computes it as DSE_SQLITE_HASH; dse/adminneo reads it here.
+ *
+ * @copyright Copyright (C) 1998 - 2026 Exponential Foundation and 7x. All rights reserved.
+ * @license GNU General Public License v2.0 (or any later version)
+ * @package sevenx_dse
  */
 
-$ini    = eZINI::instance( 'site.ini' );
-$host   = $ini->variable( 'DatabaseSettings', 'Server' );
-$port   = $ini->variable( 'DatabaseSettings', 'Port' );
-$dbName = $ini->variable( 'DatabaseSettings', 'Database' );
-$user   = $ini->variable( 'DatabaseSettings', 'User' );
-$pass   = $ini->variable( 'DatabaseSettings', 'Password' );
+if ( !class_exists( 'sevenxDseMainDatabase', false ) )
+{
+    require_once __DIR__ . '/../classes/sevenxdsemaindatabase.php';
+}
 
-// AdminNeo expects "host" or "host:port".
-$server = ( $port !== '' && $port !== null ) ? $host . ':' . $port : $host;
+// SQLite paths are relative to the installation root; the SQLite driver resolves them against this constant (the
+// current directory is not the root under PHP-FPM, and dse/adminneo changes into the adminneo directory).
+if ( !defined( 'AdminNeo\DSE_SQLITE_BASE' ) && class_exists( 'eZSys' ) )
+{
+    define( 'AdminNeo\DSE_SQLITE_BASE', rtrim( (string)eZSys::rootDir(), '/' ) );
+}
 
-// No 'servers' list — lets AdminNeo show free-form fields and a driver
-// dropdown so the user can connect to any supported engine (MySQL/MariaDB,
-// PostgreSQL, SQLite, MSSQL, Oracle, …).  The eZ server/username/database
-// are pre-filled via $_GET injection in dashboard.php; the user supplies
-// the password once and it is cached in the neo_sid session.
-//
-// defaultPasswordHash: SQLite has no native user/password authentication.
-// AdminNeo requires a pre-configured bcrypt hash so it can verify the
-// password the user types before opening the file.  The hash is generated
-// once in dashboard.php (where the password is already read from site.ini)
-// and passed here via the DSE_SQLITE_HASH constant so both sides are
-// guaranteed to use the exact same value.
-return [
-    'defaultDriver'       => 'mysql',
-    'defaultPasswordHash' => defined('DSE_SQLITE_HASH') ? \DSE_SQLITE_HASH : null,
-];
+$_dseMain = sevenxDseMainDatabase::current(
+    class_exists( 'ezpI18n' ) ? ezpI18n::tr( 'extension/sevenx_dse', 'Database of this site' ) : ''
+);
+$_dseConfig = array(
+    'defaultPasswordHash' => defined( 'DSE_SQLITE_HASH' ) ? \DSE_SQLITE_HASH
+        : ( $_dseMain !== null && $_dseMain['driver'] === 'sqlite' ? (string)eZINI::instance( 'site.ini' )->variable( 'DatabaseSettings', 'Password' ) : null ),
+);
+if ( $_dseMain !== null )
+{
+    $_dseConfig['servers'] = array( sevenxDseMainDatabase::SERVER_KEY => $_dseMain );
+    $_dseConfig['defaultServer'] = sevenxDseMainDatabase::SERVER_KEY;
+    $_dseConfig['defaultDriver'] = $_dseMain['driver'];
+}
+unset( $_dseMain );
+
+return $_dseConfig;

@@ -184,5 +184,13 @@
         <source>Cancel and go back</source>
         <translation>Anulować i wrócić</translation>
     </message>
+    <message>
+        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
+        <translation>Edytor otwiera bazę danych, na której działa ta witryna, z danymi logowania z jej ustawień (site.ini [DatabaseSettings]); dane logowania nigdy nie są wpisywane ani pokazywane. Oferowany jest tylko jej silnik, %engine: witryna nie używa żadnego innego, a połączenie wpisane ręcznie mogłoby trafić do bazy danych, która nie należy do witryny.</translation>
+    </message>
+    <message>
+        <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
+        <translation>Edytor loguje się danymi logowania bazy danych witryny z site.ini. Nie są one wpisywane, nie trafiają do żadnego formularza i nie są pokazywane.</translation>
+    </message>
 </context>
 </TS>

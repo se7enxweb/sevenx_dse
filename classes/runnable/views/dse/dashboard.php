@@ -154,10 +154,17 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         $_dseHadDriverKey = (bool) array_intersect( array_keys( $_dseRawParams ), $_dseDriverKeys );
         unset( $_dseRawParams, $_dseDriverKeys );
 
-        // Inject MySQL defaults only when there are no remembered server sessions.
-        // When $_SESSION['pwds'] is set, AdminNeo renders its own server-picker with
-        // all previously-authenticated servers — injecting mysql= would cause auto-connect.
-        if ( !$_dseHadDriverKey && empty( $_SESSION['pwds'] ) ) {
+        // The main database of the installation (site.ini [DatabaseSettings] of this siteaccess), AdminNeo's one
+        // configured server (adminneo/adminneo-config.php): its engine is the only one offered, its login comes from
+        // the INI. null only when AdminNeo has no driver for the engine; then the free-form login form is shown.
+        if ( !class_exists( 'sevenxDseMainDatabase', false ) ) {
+            require_once dirname( $this->scriptFile() ) . '/../../classes/sevenxdsemaindatabase.php';
+        }
+        $_dseMain = \sevenxDseMainDatabase::current();
+
+        // Without a configured server: prefill the free-form login form with the site's server, database and user
+        // when there are no remembered server sessions.
+        if ( $_dseMain === null && !$_dseHadDriverKey && empty( $_SESSION['pwds'] ) ) {
             $_GET['mysql']    = $_ezServer;
             $_GET['db']       = $_GET['db'] ?? $_ezDb;
             $_GET['username'] = $_GET['username'] ?? $_ezUser;
@@ -245,8 +252,9 @@ class Dashboard extends \Exponential\Runnable\ModuleView
                 $tpl->setVariable( 'dse_gate', true );
                 $tpl->setVariable( 'dse_self_url', $_selfUrl );
                 $tpl->setVariable( 'dse_info', self::describe( $adminNeoDir ) );
-                $tpl->setVariable( 'dse_remembered_servers', self::rememberedServers( isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null ) );
-                $tpl->setVariable( 'dse_prefill_password', DSE_PREFILL_PASSWORD );
+                $tpl->setVariable( 'dse_remembered_servers', $_dseMain !== null ? 0 : self::rememberedServers( isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null ) );
+                $tpl->setVariable( 'dse_prefill_password', DSE_PREFILL_PASSWORD && $_dseMain === null );
+                $tpl->setVariable( 'dse_main_only', $_dseMain !== null );
                 $tpl->setVariable( 'neo_body', $tpl->fetch( 'design:dse/gate.tpl' ) );
                 unset( $_selfUrl, $_neoIsNavRequest, $_dseHadDriverKey );
 
@@ -268,6 +276,12 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // Ack POST: preserve pwds (server list survives), set one-time bypass token,
         // redirect to bare /dse/dashboard. AdminNeo renders its server-picker showing
         // all previously-authenticated servers — no auto-connect, no driver key.
+        // With the site's main database configured, the acknowledgement connects to it straight away: it is handed to
+        // AdminNeo as its login form for that server (no login typed in), and AdminNeo redirects to the database.
+        if ( isset( $_POST['dse_ack_warning'] ) && $_dseMain !== null ) {
+            $_SESSION['dse_ack'] = true;
+            $_POST = array( 'auth' => self::mainDatabaseLogin( $_dseMain ) );
+        }
         if ( isset( $_POST['dse_ack_warning'] ) ) {
             $_SESSION['dse_ack']         = true;
             $_SESSION['dse_bypass_once'] = true;
@@ -287,11 +301,17 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         $_dseSiteRoot = realpath( dirname( $this->scriptFile() ) . '/../../../..' );
 
 
-        if ( isset( $_GET['sqlite'] ) && $_GET['sqlite'] !== '' ) {
+        // The configured main database is named by its key ("main"), not by a path; its file is the one site.ini names.
+        $_dseMainKey = \sevenxDseMainDatabase::SERVER_KEY;
+        if ( isset( $_GET['sqlite'] ) && $_GET['sqlite'] === $_dseMainKey && $_dseMain !== null && $_dseMain['driver'] === 'sqlite' ) {
+            if ( isset( $_GET['db'] ) ) {
+                $_GET['db'] = $_dseMain['database'];
+            }
+        } elseif ( isset( $_GET['sqlite'] ) && $_GET['sqlite'] !== '' ) {
             $_GET['sqlite'] = _dse_sanitize_sqlite_path( $_GET['sqlite'], $_dseSiteRoot );
         }
         if ( isset( $_POST['auth']['driver'] ) && $_POST['auth']['driver'] === 'sqlite'
-            && isset( $_POST['auth']['server'] ) && $_POST['auth']['server'] !== '' ) {
+            && isset( $_POST['auth']['server'] ) && $_POST['auth']['server'] !== '' && $_POST['auth']['server'] !== $_dseMainKey ) {
             $_POST['auth']['server'] = _dse_sanitize_sqlite_path( $_POST['auth']['server'], $_dseSiteRoot );
         }
         // Expose the site root as a constant so sqlite.inc.php open() can resolve
@@ -321,7 +341,8 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         }
         // Make the eZ password available to the login form pre-fill (in-request only, not in URL/session).
         // Only active when DSE_SHOW_LOGIN=true AND DSE_PREFILL_PASSWORD=true (opt-in, off by default).
-        if ( DSE_SHOW_LOGIN && DSE_PREFILL_PASSWORD && !defined( 'DSE_DEFAULT_PASSWORD' ) ) {
+        // Never with the main database configured: its login is not in the form at all.
+        if ( DSE_SHOW_LOGIN && DSE_PREFILL_PASSWORD && $_dseMain === null && !defined( 'DSE_DEFAULT_PASSWORD' ) ) {
             define( 'DSE_DEFAULT_PASSWORD', $_ezPassword );
         }
         // Pre-compute the bcrypt hash from the known-good password HERE in dashboard.php
@@ -449,7 +470,13 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             'kernel_tables'  => 0,
             'adminneo'       => self::adminNeoVersion( $adminNeoDir ),
             'drivers'        => self::drivers( $adminNeoDir ),
+            'engine'         => '',
         );
+        if ( class_exists( 'sevenxDseMainDatabase' ) )
+        {
+            $main = \sevenxDseMainDatabase::current();
+            $info['engine'] = $main !== null ? \sevenxDseMainDatabase::engineName( $main['driver'] ) : '';
+        }
         try
         {
             $db = \eZDB::instance();
@@ -489,6 +516,19 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             $drivers[] = basename( $file, '.inc.php' );
         sort( $drivers );
         return $drivers;
+    }
+
+    /**
+     * AdminNeo's login form for the main database (sevenxDseMainDatabase): its server key and driver, no login (the
+     * server brings its own from site.ini).
+     *
+     * @param array $main sevenxDseMainDatabase::server()
+     * @return array the auth[] fields
+     */
+    public static function mainDatabaseLogin( array $main )
+    {
+        return array( 'driver' => (string)$main['driver'], 'server' => \sevenxDseMainDatabase::SERVER_KEY,
+                      'username' => '', 'password' => '', 'db' => '', 'permanent' => '' );
     }
 
     /**

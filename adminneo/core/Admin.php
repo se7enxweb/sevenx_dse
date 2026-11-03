@@ -105,12 +105,16 @@ class Admin extends Origin
 			echo $this->admin->getLoginFormRow('server', lang('Server'), '<input class="input" name="auth[server]" value="' . h($server) . '" title="hostname[:port]" placeholder="localhost" autocapitalize="off">');
 		}
 
-// Pre-fill username and password from config when a server is pre-configured.
-                $_serverObj = $server ? $this->config->getServer($server) : null;
-                echo $this->admin->getLoginFormRow('username', lang('Username'), '<input class="input" name="auth[username]" id="username" value="' . h($_GET["username"] ?: ($_serverObj?->getUsername() ?? "")) . '" autocomplete="username" autocapitalize="off">');
-                $_configPassword = $_serverObj?->getPassword() ?? (defined('DSE_DEFAULT_PASSWORD') ? \DSE_DEFAULT_PASSWORD : "");
-                echo $this->admin->getLoginFormRow('password', lang('Password'), '<input type="password" class="input" name="auth[password]" value="' . h($_configPassword) . '" autocomplete="current-password">');
-                unset($_serverObj, $_configPassword);
+		if ($serverPairs) {
+			// sevenx_dse: the configured servers (the site's main database) bring their own login from the INI.
+			// It is not typed in and never written into the form: empty fields make auth.inc.php use the server's.
+			echo input_hidden("auth[username]", "") . input_hidden("auth[password]", "");
+		} else {
+			echo $this->admin->getLoginFormRow('username', lang('Username'), '<input class="input" name="auth[username]" id="username" value="' . h($_GET["username"]) . '" autocomplete="username" autocapitalize="off">');
+			$_configPassword = defined('DSE_DEFAULT_PASSWORD') ? \DSE_DEFAULT_PASSWORD : "";
+			echo $this->admin->getLoginFormRow('password', lang('Password'), '<input type="password" class="input" name="auth[password]" value="' . h($_configPassword) . '" autocomplete="current-password">');
+			unset($_configPassword);
+		}
 
 		if (!$serverPairs) {
 			$database = $_GET["db"] ?? $this->config->getDefaultDatabase();

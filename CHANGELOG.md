@@ -3,6 +3,20 @@
 All notable changes to sevenx_dse. Earlier releases are described on
 <https://github.com/se7enxweb/sevenx_dse/releases>.
 
+## Unreleased
+
+- Updated: The editor opens the main database of the installation, read from `site.ini [DatabaseSettings]` of the
+  siteaccess the way the kernel reads it, as AdminNeo's one configured server (`classes/sevenxdsemaindatabase.php`).
+  Acknowledging the dashboard connects to it straight away. Its login comes from the INI and is never typed in,
+  written into a form or shown; only the server key `main` is in the URL. Only the engine the site runs on is
+  offered (SQLite only for an SQLite site, MySQL/MariaDB only for a MySQL site, and so on); the dashboard explains
+  why. Before, the login form preselected MySQL with every driver in its list, and an SQLite site showed no tables:
+  the form offered the bare `Database` value (`sqlite.db`), which the kernel finds in `var/storage/sqlite3/` but
+  the editor looked for in the installation root, so the file was refused (#16641).
+- Updated: SQLite: the table list and the database page leave out SQLite's own tables (`sqlite_sequence`,
+  `sqlite_stat1` ...).
+- Updated: `dse.ini [DSESettings] InsecureUse` only applies when AdminNeo has no driver for the site's engine.
+
 ## 1.1.20 (2026-11-01)
 
 - Updated: SQLite: every page of the editor with a database selected opens in a fraction of a second instead of

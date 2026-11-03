@@ -8,7 +8,8 @@
 
    Variables (from the dashboard view): dse_self_url (where the acknowledgement posts), dse_info (implementation,
    database, has_server, driver, version, tables, kernel_tables, adminneo, drivers), dse_remembered_servers (logins
-   AdminNeo remembers in this session, a count), dse_prefill_password (InsecureUse is enabled). No credentials are
+   AdminNeo remembers in this session, a count), dse_prefill_password (InsecureUse is enabled), dse_main_only (the editor
+   opens only the main database of site.ini, with its login; info.engine names its engine). No credentials are
    handed to this template. The form posts dse_ack_warning=1 as before. *}
 {def $info = first_set( $dse_info, hash() )
      $remembered = first_set( $dse_remembered_servers, 0 )}
@@ -50,7 +51,11 @@
     <li class="a4-card"><h3 class="a4-h3">{'Run SQL'|i18n( 'extension/sevenx_dse' )}</h3><p class="a4-help">{'Type any statement and see its result. A SELECT reads; every other statement changes the live data at once.'|i18n( 'extension/sevenx_dse' )}</p></li>
     <li class="a4-card"><h3 class="a4-h3">{'Look at the structure'|i18n( 'extension/sevenx_dse' )}</h3><p class="a4-help">{'Columns, indexes, foreign keys, views and triggers of each table, and a schema diagram.'|i18n( 'extension/sevenx_dse' )}</p></li>
     <li class="a4-card"><h3 class="a4-h3">{'Export and import'|i18n( 'extension/sevenx_dse' )}</h3><p class="a4-help">{'Download tables or the whole database as SQL, CSV or TSV, straight to a file; run an SQL file you upload.'|i18n( 'extension/sevenx_dse' )}</p></li>
+    {if first_set( $dse_main_only, false() )}
+    <li class="a4-card"><h3 class="a4-h3">{'Database of this site'|i18n( 'extension/sevenx_dse' )}</h3><p class="a4-help">{'The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.'|i18n( 'extension/sevenx_dse',, hash( '%engine', first_set( $info.engine, '' )|wash ) )}</p></li>
+    {else}
     <li class="a4-card"><h3 class="a4-h3">{'Open another database'|i18n( 'extension/sevenx_dse' )}</h3><p class="a4-help">{'Sign in to another server or an SQLite file inside the site directory. Drivers: %drivers.'|i18n( 'extension/sevenx_dse',, hash( '%drivers', first_set( $info.drivers, array() )|implode( ', ' )|wash ) )}</p></li>
+    {/if}
 </ul>
 </section>
 
@@ -62,8 +67,12 @@
 <ul class="a4-dse-list">
     <li>{'Only users whose role has a policy for the dse module (its function dse, or all of its functions) can open it.'|i18n( 'extension/sevenx_dse' )}</li>
     <li>{'This page comes first every time the editor is opened from the menu; nothing is connected before you confirm.'|i18n( 'extension/sevenx_dse' )}</li>
+    {if first_set( $dse_main_only, false() )}
+    <li>{'The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.'|i18n( 'extension/sevenx_dse' )}</li>
+    {else}
     {if first_set( $dse_prefill_password, false() )|not}<li>{'AdminNeo asks for the database login itself. The password of the site database is not written into the form.'|i18n( 'extension/sevenx_dse' )}</li>{/if}
     <li>{'SQLite files are accepted only by a relative path inside the site directory.'|i18n( 'extension/sevenx_dse' )}</li>
+    {/if}
     {if $remembered|gt( 0 )}<li>{'AdminNeo remembers %count database logins in your session; they are offered after you confirm. Log out in the editor to forget them.'|i18n( 'extension/sevenx_dse',, hash( '%count', $remembered ) )}</li>{/if}
 </ul>
 {if first_set( $dse_prefill_password, false() )}

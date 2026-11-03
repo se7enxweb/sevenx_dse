@@ -324,7 +324,7 @@ if (isset($_GET["sqlite"])) {
 	}
 
 	function tables_list() {
-		return get_key_vals("SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY (name = 'sqlite_sequence'), name");
+		return get_key_vals("SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\' ORDER BY name"); // not SQLite's own tables (sqlite_sequence, sqlite_stat1 ...)
 	}
 
 	function count_tables($databases) {
@@ -337,7 +337,7 @@ if (isset($_GET["sqlite"])) {
 	 */
 	function table_status($name = "", $fast = false) {
 		$return = [];
-		foreach (get_rows("SELECT name AS Name, type AS Engine, 'rowid' AS Oid, '' AS Auto_increment FROM sqlite_master WHERE type IN ('table', 'view') " . ($name != "" ? "AND name = " . q($name) : "ORDER BY name")) as $row) {
+		foreach (get_rows("SELECT name AS Name, type AS Engine, 'rowid' AS Oid, '' AS Auto_increment FROM sqlite_master WHERE type IN ('table', 'view') " . ($name != "" ? "AND name = " . q($name) : "AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\' ORDER BY name")) as $row) {
 			if (!$fast) {
 				$row["Rows"] = Connection::get()->getValue("SELECT COUNT(*) FROM " . idf_escape($row["Name"]));
 			}

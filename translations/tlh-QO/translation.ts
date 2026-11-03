@@ -187,5 +187,13 @@
         <source>Cancel and go back</source>
         <translation>yIqIl &apos;ej yIchegh</translation>
     </message>
+    <message>
+        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
+        <translation>De&apos; pa&apos; yoSvam ghItlhwI&apos; poSmoH, site.ini [DatabaseSettings] Dalmo&apos; &apos;el; &apos;el pagh ghItlhlu&apos; &apos;ej pagh &apos;aghlu&apos;. %engine neH nobmeH lu&apos;. latlh lo&apos;be&apos; yoS; ghop ghItlhmo&apos; rar, De&apos; pa&apos; yoS DoSbe&apos; &apos;ej ghoSlaH.</translation>
+    </message>
+    <message>
+        <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
+        <translation>site.ini Dalmo&apos; yoS De&apos; pa&apos; &apos;el lo&apos; ghItlhwI&apos;. ghItlhbe&apos;lu&apos;, ghItlh pegh, &apos;aghbe&apos;lu&apos;.</translation>
+    </message>
 </context>
 </TS>

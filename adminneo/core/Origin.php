@@ -142,6 +142,12 @@ abstract class Origin extends Plugin
 	{
 		$server = $this->config->getServer(SERVER);
 
+		// sevenx_dse: a configured server with its own login (the site's main database, from site.ini) connects with
+		// that login; it stays out of the URL ("username=") and the session.
+		if ($server && $server->hasCredentials()) {
+			return [$server->getServer(), $server->getUsername(), $server->getPassword()];
+		}
+
 		return [$server ? $server->getServer() : SERVER, $_GET["username"], get_password()];
 	}
 
@@ -169,6 +175,12 @@ abstract class Origin extends Plugin
 	 */
 	public function authenticate(string $username, string $password)
 	{
+		// sevenx_dse: the connection was opened with the configured server's own login (getCredentials()).
+		$server = SERVER !== null ? $this->config->getServer(SERVER) : null;
+		if ($server && $server->hasCredentials()) {
+			return true;
+		}
+
 		if ($password == "") {
 			$hash = $this->config->getDefaultPasswordHash();
 

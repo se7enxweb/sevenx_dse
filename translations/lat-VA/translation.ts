@@ -187,5 +187,13 @@
         <source>Cancel and go back</source>
         <translation>Abrogare et redire</translation>
     </message>
+    <message>
+        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
+        <translation>Editor basem datorum aperit, qua hic situs utitur, cum nomine et tessera ex eius praeceptis (site.ini [DatabaseSettings]); haec numquam inscribuntur neque ostenduntur. Solum eius machina, %engine, offertur: situs nulla alia utitur, et conexio manu inscripta ad basem datorum pervenire posset quae ad situm non pertinet.</translation>
+    </message>
+    <message>
+        <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
+        <translation>Editor nomine et tessera basis datorum situs ex site.ini intrat. Haec non inscribuntur, in nulla forma scribuntur neque ostenduntur.</translation>
+    </message>
 </context>
 </TS>

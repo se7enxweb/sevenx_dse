@@ -4,6 +4,8 @@
 # Controls whether the AdminNeo login form password field is pre-populated
 # with the eZ database password from site.ini.
 # Set to "enabled" only in trusted development environments.
+# Only used when AdminNeo has no driver for the engine of the site database: otherwise
+# the editor opens that database with the login from site.ini and shows no login form.
 # SECURITY: leaving this enabled in production exposes the database password
 # to anyone who can view the browser's form source.
 InsecureUse=disabled

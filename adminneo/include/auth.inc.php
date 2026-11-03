@@ -204,9 +204,11 @@ if ($auth) {
 	$username = $auth["username"] ?? "";
 	$password = $auth["password"] ?? "";
 
-	if ($server_obj && $server_obj->hasCredentials() && $username == "" && $password == "") {
-		$username = $server_obj->getUsername();
-		$password = $server_obj->getPassword();
+	// sevenx_dse: a configured server with its own login connects with it (Origin::getCredentials()); nothing typed
+	// in is used, and the login stays out of the URL and the session.
+	if ($server_obj && $server_obj->hasCredentials()) {
+		$username = "";
+		$password = "";
 	}
 
 	$db = $server_obj ? $server_obj->getDatabase() : ($auth["db"] ?? "");

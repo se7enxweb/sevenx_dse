@@ -184,5 +184,13 @@
         <source>Cancel and go back</source>
         <translation>Avbryt och gå tillbaka</translation>
     </message>
+    <message>
+        <source>The editor opens the database this site runs on, with the login from its settings (site.ini [DatabaseSettings]); the login is never typed in or shown. Only its engine, %engine, is offered: the site uses no other, and a connection typed in by hand could reach a database that does not belong to the site.</source>
+        <translation>Redigeraren öppnar databasen som den här webbplatsen körs på, med inloggningen från dess inställningar (site.ini [DatabaseSettings]); inloggningen skrivs aldrig in eller visas. Endast dess databassystem, %engine, erbjuds: webbplatsen använder inget annat, och en anslutning som skrivs in för hand kunde nå en databas som inte hör till webbplatsen.</translation>
+    </message>
+    <message>
+        <source>The editor signs in with the login of the site database from site.ini. It is not typed in, not written into any form and not shown.</source>
+        <translation>Redigeraren loggar in med webbplatsdatabasens inloggning från site.ini. Den skrivs inte in, skrivs inte i något formulär och visas inte.</translation>
+    </message>
 </context>
 </TS>
