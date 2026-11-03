@@ -3,6 +3,17 @@
 All notable changes to sevenx_dse. Earlier releases are described on
 <https://github.com/se7enxweb/sevenx_dse/releases>.
 
+## Unreleased
+
+- Updated: "Change database" (`dse_switch`) opens the database chooser (`/dse/dashboard/(dse_choose)/1`) instead of
+  the dashboard's warning again, when the warning was confirmed in this session; without that confirmation the
+  warning comes first, as on every visit from the menu. The chooser offers the site's database with one click ("Open
+  the database of this site", still with the login from `site.ini`, never shown), the logins AdminNeo remembers in
+  this session with the current connection marked "Connected now", and AdminNeo's login form with every driver for
+  another database or SQLite file. "Connect to another database" on the dashboard and AdminNeo's "Logout" land there
+  too. Only the driver, server key or path, username and database of a login are listed; no password reaches the
+  page or the address.
+
 ## 1.1.21 (2026-11-02)
 
 - Updated: The dashboard opens the main database of the installation with one click ("Open the database of this

@@ -200,5 +200,29 @@
         <source>Connect to another database</source>
         <translation>Připojit se k jiné databázi</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Vyberte databázi</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>V této relaci jste potvrdili varování. Otevřete databázi tohoto webu, přepněte na přihlášení zapamatované v této relaci nebo se pomocí formuláře níže přihlaste k jiné databázi.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Přihlášení v této relaci</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Nyní připojeno</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>V této relaci nejsou zapamatována žádná přihlášení.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Přihlaste se pomocí formuláře níže: každý systém, který zde AdminNeo má, libovolný server, přihlášení a databáze nebo soubor SQLite v adresáři webu.</translation>
+    </message>
 </context>
 </TS>

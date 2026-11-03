@@ -200,5 +200,29 @@
         <source>Connect to another database</source>
         <translation>Başka bir veritabanına bağlan</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Bir veritabanı seçin</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>Bu oturumda uyarıyı onayladınız. Bu sitenin veritabanını açın, bu oturumda hatırlanan bir oturum açmaya geçin veya aşağıdaki formla başka bir veritabanına giriş yapın.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Bu oturumdaki girişler</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Şimdi bağlı</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>Bu oturumda hatırlanan giriş yok.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Aşağıdaki formla giriş yapın: AdminNeo&apos;nun burada sahip olduğu her sistem, herhangi bir sunucu, kullanıcı ve veritabanı veya site dizinindeki bir SQLite dosyası.</translation>
+    </message>
 </context>
 </TS>

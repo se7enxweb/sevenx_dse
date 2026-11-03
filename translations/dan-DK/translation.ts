@@ -200,5 +200,29 @@
         <source>Connect to another database</source>
         <translation>Forbind til en anden database</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Vælg en database</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>Du har bekræftet advarslen i denne session. Åbn databasen for dette websted, skift til et login, der huskes i denne session, eller log ind på en anden database med formularen nedenfor.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Logins i denne session</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Forbundet nu</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>Ingen logins huskes i denne session.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Log ind med formularen nedenfor: alle systemer AdminNeo har her, enhver server, login og database eller en SQLite-fil i webstedets mappe.</translation>
+    </message>
 </context>
 </TS>

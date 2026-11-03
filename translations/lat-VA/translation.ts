@@ -203,5 +203,29 @@
         <source>Connect to another database</source>
         <translation>Ad aliam basem datorum conectere</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Basem datorum elige</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>Monitum in hac sessione confirmavisti. Basem datorum huius situs aperi, ad accessum in hac sessione memoratum transi, aut formula infra in aliam basem datorum ingredere.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Accessus in hac sessione</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Nunc conexum</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>Nulli accessus in hac sessione memorantur.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Formula infra ingredere: omne systema quod AdminNeo hic habet, quodlibet servitrum, accessus et basis datorum, aut fasciculus SQLite intra directorium situs.</translation>
+    </message>
 </context>
 </TS>

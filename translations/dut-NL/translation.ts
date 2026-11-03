@@ -200,5 +200,29 @@
         <source>Connect to another database</source>
         <translation>Verbinden met een andere database</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Kies een database</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>U hebt de waarschuwing in deze sessie bevestigd. Open de database van deze site, schakel over naar een in deze sessie onthouden aanmelding of meld u met het formulier hieronder aan bij een andere database.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Aanmeldingen in deze sessie</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Nu verbonden</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>Er zijn in deze sessie geen aanmeldingen onthouden.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Meld u aan met het formulier hieronder: elk systeem dat AdminNeo hier heeft, elke server, aanmelding en database, of een SQLite-bestand in de map van de site.</translation>
+    </message>
 </context>
 </TS>

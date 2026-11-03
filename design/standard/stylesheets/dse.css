@@ -15,6 +15,17 @@
 .a4-dse-list li + li { margin-top: var(--a4-space-1); }
 .a4-dse-after { margin: var(--a4-space-3) 0 0; }
 
+/* ---- The database chooser (dse/chooser.tpl), above AdminNeo's login page --------------------------------------- */
+
+.a4-dse-chooser { margin-bottom: var(--a4-space-4); }
+.a4-dse-choices { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.a4-dse-choices .a4-h3 { margin-bottom: var(--a4-space-1); }
+.a4-dse-choices form { margin: var(--a4-space-2) 0 0; }
+.a4-dse-logins { margin: 0; padding: 0; list-style: none; }
+.a4-dse-logins li { padding: var(--a4-space-1) 0; overflow-wrap: anywhere; }
+.a4-dse-logins li + li { border-top: 1px solid var(--a4-line); }
+.a4-dse-logins li.is-current a { font-weight: var(--a4-weight-strong); }
+
 /* ---- The embedded editor: AdminNeo's colors from the tokens ---------------------------------------------------- */
 
 /* AdminNeo draws everything from these variables. They are set to the administration's tokens, which have their own

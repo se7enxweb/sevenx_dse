@@ -200,5 +200,29 @@
         <source>Connect to another database</source>
         <translation>Poveži se s drugom bazom podataka</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Odaberite bazu podataka</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>Potvrdili ste upozorenje u ovoj sesiji. Otvorite bazu podataka ove stranice, prijeđite na prijavu zapamćenu u ovoj sesiji ili se obrascem ispod prijavite u drugu bazu podataka.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Prijave u ovoj sesiji</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Sada povezano</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>U ovoj sesiji nema zapamćenih prijava.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Prijavite se obrascem ispod: svaki sustav koji AdminNeo ovdje ima, bilo koji poslužitelj, prijava i baza podataka ili SQLite datoteka unutar direktorija stranice.</translation>
+    </message>
 </context>
 </TS>

@@ -49,6 +49,101 @@ namespace Exponential\View\Extension\SevenxDse\Dse
 
 class Dashboard extends \Exponential\Runnable\ModuleView
 {
+    /** The view parameter of the database chooser, after the dashboard's address */
+    const CHOOSER_PATH = '/(dse_choose)/1';
+
+    /** AdminNeo's drivers, the parameter names that carry the server */
+    const DRIVERS = array( 'mysql', 'pgsql', 'sqlite', 'mssql', 'oracle', 'mongo', 'elastic', 'clickhouse', 'simpledb' );
+
+    /**
+     * The connection a request of the editor works with: its driver parameter and username, when AdminNeo holds a
+     * login for them in the session (pwds). No password is read or returned.
+     *
+     * @param array $get the request's parameters
+     * @param array|null $pwds $_SESSION['pwds']
+     * @return array|null array( driver, server, username, db )
+     */
+    public static function currentLogin( array $get, $pwds )
+    {
+        if ( !isset( $get['username'] ) || !is_array( $pwds ) )
+            return null;
+        foreach ( self::DRIVERS as $driver )
+        {
+            if ( isset( $get[$driver] ) && !is_array( $get[$driver] ) )
+            {
+                $server = (string)$get[$driver];
+                $username = (string)$get['username'];
+                if ( !isset( $pwds[$driver][$server] ) || !is_array( $pwds[$driver][$server] )
+                     || !array_key_exists( $username, $pwds[$driver][$server] ) || $pwds[$driver][$server][$username] === null )
+                    return null;
+                return array( $driver, $server, $username, isset( $get['db'] ) && !is_array( $get['db'] ) ? (string)$get['db'] : '' );
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The logins AdminNeo remembers in this session, for the database chooser: one entry per login and database, as
+     * AdminNeo lists them, with its address in view parameters and whether it is the current connection. No password:
+     * only whether one is held.
+     *
+     * @param array|null $pwds $_SESSION['pwds']
+     * @param array|null $dbs $_SESSION['db']
+     * @param array|null $current see currentLogin()
+     * @param string $base the dashboard's address
+     * @return array list of hash( driver, server, username, db, db_name, is_main, current, url )
+     */
+    public static function rememberedLogins( $pwds, $dbs, $current, $base )
+    {
+        $logins = array();
+        if ( !is_array( $pwds ) )
+            return $logins;
+        if ( !class_exists( 'sevenxDseViewParameters', false ) )
+            require_once __DIR__ . '/../../../sevenxdseviewparameters.php';
+        if ( !class_exists( 'sevenxDseMainDatabase', false ) )
+            require_once __DIR__ . '/../../../sevenxdsemaindatabase.php';
+        foreach ( $pwds as $driver => $servers )
+        {
+            if ( !is_array( $servers ) || !in_array( (string)$driver, self::DRIVERS, true ) )
+                continue;
+            foreach ( $servers as $server => $usernames )
+            {
+                if ( !is_array( $usernames ) )
+                    continue;
+                foreach ( $usernames as $username => $password )
+                {
+                    if ( $password === null )
+                        continue;
+                    $driver = (string)$driver;
+                    $server = (string)$server;
+                    $username = (string)$username;
+                    $names = isset( $dbs[$driver][$server][$username] ) && is_array( $dbs[$driver][$server][$username] )
+                        ? array_keys( $dbs[$driver][$server][$username] ) : array( '' );
+                    foreach ( $names as $db )
+                    {
+                        $db = (string)$db;
+                        $pairs = array( array( $driver, $server ), array( 'username', $username ) );
+                        if ( $db !== '' )
+                            $pairs[] = array( 'db', $db );
+                        $logins[] = array(
+                            'driver'   => \sevenxDseMainDatabase::engineName( $driver ),
+                            'server'   => $server,
+                            'username' => $username,
+                            'db'       => $db,
+                            'db_name'  => basename( $db ),
+                            'is_main'  => $server === \sevenxDseMainDatabase::SERVER_KEY,
+                            'current'  => is_array( $current ) && count( $current ) === 4
+                                && array( $driver, $server, $username ) === array_slice( array_map( 'strval', $current ), 0, 3 )
+                                && ( $db === (string)$current[3] || count( $names ) === 1 ),
+                            'url'      => $base . \sevenxDseViewParameters::pairsToPath( $pairs ),
+                        );
+                    }
+                }
+            }
+        }
+        return $logins;
+    }
+
     public function run( array $scope )
     {
         // the including function's variables ($Params, $Module, $cli, ...)
@@ -163,6 +258,9 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             \eZExecution::setCleanExit();
             exit;
         }
+        // (dse_choose) is the database chooser of the editor, not a parameter of AdminNeo: it never reaches its links.
+        $_dseChoose = isset( $_dseParams['dse_choose'] );
+        unset( $_dseParams['dse_choose'] );
         $_GET = $_dseParams;
         $_SERVER['QUERY_STRING'] = http_build_query( $_dseParams );
         $_SERVER['REQUEST_URI'] = $_dseBase . ( $_SERVER['QUERY_STRING'] !== '' ? '?' . $_SERVER['QUERY_STRING'] : '' );
@@ -248,8 +346,10 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         );
 
         // "Change database" handler — verified by a per-session CSRF token.
-        // Only clears dse_ack (so the gate reappears) but keeps $_SESSION['pwds']
-        // intact so AdminNeo still shows the previously-authenticated servers.
+        // It opens the database chooser (dse_choose): the site's database with one click, AdminNeo's login form with
+        // every driver and the logins remembered in this session. The warning was confirmed in this session already
+        // (dse_ack), so it is not asked again; without that confirmation the dashboard's warning comes first, as on
+        // every bare visit. $_SESSION['pwds'] is kept, so the remembered logins stay.
         if ( !isset( $_SESSION['dse_switch_token'] ) ) {
             $_SESSION['dse_switch_token'] = bin2hex( random_bytes( 16 ) );
         }
@@ -257,12 +357,10 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             && ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) === 'GET'
             && hash_equals( $_SESSION['dse_switch_token'], (string) $_GET['dse_switch'] )
         ) {
-            unset( $_SESSION['dse_ack'] );
             // Rotate token after use.
             $_SESSION['dse_switch_token'] = bin2hex( random_bytes( 16 ) );
-            $_dseBase = rtrim( preg_replace( '~\?.*~', '', $_SERVER['REQUEST_URI'] ), '/' );
-            header( 'Location: ' . $_dseBase );
-            unset( $_dseBase, $_neoIsNavRequest, $_dseHadDriverKey );
+            header( 'Location: ' . $_dseBase . ( !empty( $_SESSION['dse_ack'] ) ? self::CHOOSER_PATH : '' ) );
+            unset( $_neoIsNavRequest, $_dseHadDriverKey );
             \eZExecution::setCleanExit();
             exit;
         }
@@ -276,8 +374,13 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // Bare GET with no driver key and not a nav request: show the gate — unless
         // a one-time post-ack bypass token is present (set by the ack POST handler).
         // pwds is never wiped here so existing server sessions remain for the picker.
+        $_dseChooser = false;
         if ( !$_neoIsNavRequest && !$_dseHadDriverKey && ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) === 'GET' ) {
-            if ( !empty( $_SESSION['dse_bypass_once'] ) ) {
+            if ( $_dseChoose && !empty( $_SESSION['dse_ack'] ) ) {
+                // The database chooser, after the warning was confirmed in this session: AdminNeo draws its login
+                // page, and the chooser (design:dse/chooser.tpl) is put above it.
+                $_dseChooser = true;
+            } elseif ( !empty( $_SESSION['dse_bypass_once'] ) ) {
                 // One-time bypass: ack was just accepted. Clear token only — pwds is
                 // preserved so AdminNeo shows the server-picker with remembered sessions.
                 unset( $_SESSION['dse_bypass_once'] );
@@ -326,12 +429,20 @@ class Dashboard extends \Exponential\Runnable\ModuleView
             $_SESSION['dse_ack'] = true;
             $_POST = array( 'auth' => self::mainDatabaseLogin( $_dseMain ) );
         }
+        // "Open the database of this site" in the database chooser: the same, once the warning was confirmed in this
+        // session; otherwise the dashboard's warning comes first.
+        if ( isset( $_POST['dse_open_main'] ) ) {
+            if ( empty( $_SESSION['dse_ack'] ) || $_dseMain === null ) {
+                header( 'Location: ' . $_dseBase );
+                \eZExecution::setCleanExit();
+                exit;
+            }
+            $_POST = array( 'auth' => self::mainDatabaseLogin( $_dseMain ) );
+        }
+        // "Connect to another database" (or a site without a main database AdminNeo can open): the database chooser.
         if ( isset( $_POST['dse_ack_warning'] ) ) {
-            $_SESSION['dse_ack']         = true;
-            $_SESSION['dse_bypass_once'] = true;
-            $_dseHome = rtrim( preg_replace( '~\?.*~', '', $_SERVER['REQUEST_URI'] ), '/' );
-            header( 'Location: ' . $_dseHome );
-            unset( $_dseHome );
+            $_SESSION['dse_ack'] = true;
+            header( 'Location: ' . $_dseBase . self::CHOOSER_PATH );
             \eZExecution::setCleanExit();
             exit;
         }
@@ -403,6 +514,16 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         // We pre-start TWO levels so AdminNeo's own ob_start() is a no-op (ob_get_level
         // is already >0), and then drain all levels with a loop after the include.
 
+        // The connection this request works with, when AdminNeo holds its login in the session: the database chooser
+        // marks it. Only the driver, the server key or path, the username and the database; never a password.
+        $_dseCurrent = self::currentLogin( $_GET, isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null );
+        if ( $_dseCurrent !== null ) {
+            $_SESSION['dse_current'] = $_dseCurrent;
+        }
+        unset( $_dseCurrent );
+        // AdminNeo's "Logout" forgets every login of the session and then lands on the database chooser.
+        $_dseLogout = !empty( $_POST['logout'] );
+
         $_neoObLevel = ob_get_level();
         ob_start();
         ob_start(); // second level so design.inc.php's guard doesn't add a third
@@ -422,6 +543,12 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         foreach ( headers_list() as $_h ) {
             if ( stripos( $_h, 'Location:' ) === 0 ) {
                 $_dseLocation = trim( substr( $_h, strlen( 'Location:' ) ) );
+                if ( $_dseLogout ) {
+                    unset( $_SESSION['dse_current'] );
+                    header( 'Location: ' . $_dseBase . ( !empty( $_SESSION['dse_ack'] ) ? self::CHOOSER_PATH : '' ), true );
+                    \eZExecution::setCleanExit();
+                    exit;
+                }
                 header( 'Location: ' . \sevenxDseViewParameters::rewriteLocation( $_dseLocation, $_dseBase ), true );
                 \eZExecution::setCleanExit();
                 exit;
@@ -469,7 +596,25 @@ class Dashboard extends \Exponential\Runnable\ModuleView
         $_dseSwitchUrl = $_dseDashBase . '/(dse_switch)/' . \sevenxDseViewParameters::encodeValue( $_SESSION['dse_switch_token'] );
         // AdminNeo's links, form actions, script addresses and GET forms, at view-parameter addresses.
         $_neoHtml = \sevenxDseViewParameters::rewriteHtml( $_neoHtml, $_dseBase );
-        $_dseChangeLink = '<a class="a4-dse-switch" href="' . htmlspecialchars( $_dseSwitchUrl, ENT_QUOTES ) . '" title="'
+        $_dseChooserHtml = '';
+        if ( $_dseChooser ) {
+            // The database chooser lists the remembered logins itself, with the current one marked: AdminNeo's own
+            // list of them in its navigation panel is left out.
+            $_neoHtml = preg_replace( '~<nav id=[\'"]logins[\'"]>.*?</nav>\s*~s', '', $_neoHtml );
+            $tpl = \eZTemplate::factory();
+            $tpl->setVariable( 'dse_self_url', $_dseBase );
+            $tpl->setVariable( 'dse_has_main', $_dseMain !== null );
+            $tpl->setVariable( 'dse_main_name', $_dseMain !== null
+                ? \sevenxDseMainDatabase::engineName( $_dseMain['driver'] ) . ' - ' . basename( (string)$_dseMain['database'] ) : '' );
+            $tpl->setVariable( 'dse_logins', self::rememberedLogins(
+                isset( $_SESSION['pwds'] ) ? $_SESSION['pwds'] : null,
+                isset( $_SESSION['db'] ) ? $_SESSION['db'] : null,
+                isset( $_SESSION['dse_current'] ) ? $_SESSION['dse_current'] : null,
+                $_dseBase
+            ) );
+            $_dseChooserHtml = $tpl->fetch( 'design:dse/chooser.tpl' );
+        }
+        $_dseChangeLink ='<a class="a4-dse-switch" href="' . htmlspecialchars( $_dseSwitchUrl, ENT_QUOTES ) . '" title="'
             . htmlspecialchars( \ezpI18n::tr( 'extension/sevenx_dse', 'Return to the database selector' ), ENT_QUOTES ) . '">'
             . '<span aria-hidden="true">&#8635;</span> '
             . htmlspecialchars( \ezpI18n::tr( 'extension/sevenx_dse', 'Change database' ), ENT_QUOTES ) . '&hellip;</a>';
@@ -485,7 +630,8 @@ class Dashboard extends \Exponential\Runnable\ModuleView
 
         // The row that holds AdminNeo: .a4-dse-editor scopes AdminNeo's stylesheet; ltr and js are the classes AdminNeo
         // puts on <body> (its scripts run here: main.js and jush.js are loaded by dse/dashboard.tpl).
-        $_neoOutput = '<div id="adminneo-root" class="a4-dse-editor ltr js">' . $_neoHtml . '</div>';
+        $_neoOutput = $_dseChooserHtml . '<div id="adminneo-root" class="a4-dse-editor ltr js">' . $_neoHtml . '</div>';
+        unset( $_dseChooserHtml, $_dseChooser );
         unset( $_neoHtml );
 
         $tpl = \eZTemplate::factory();

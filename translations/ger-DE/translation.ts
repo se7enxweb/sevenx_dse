@@ -200,5 +200,29 @@
         <source>Connect to another database</source>
         <translation>Mit einer anderen Datenbank verbinden</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>Datenbank wählen</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>Sie haben die Warnung in dieser Sitzung bestätigt. Öffnen Sie die Datenbank dieser Website, wechseln Sie zu einer in dieser Sitzung gemerkten Anmeldung oder melden Sie sich mit dem Formular unten bei einer anderen Datenbank an.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>Anmeldungen in dieser Sitzung</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>Jetzt verbunden</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>In dieser Sitzung sind keine Anmeldungen gemerkt.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>Melden Sie sich mit dem Formular unten an: jedes System, das AdminNeo hier hat, jeder Server, jede Anmeldung und Datenbank oder eine SQLite-Datei im Verzeichnis der Website.</translation>
+    </message>
 </context>
 </TS>

@@ -202,5 +202,29 @@
         <source>Connect to another database</source>
         <translation>התחברות למסד נתונים אחר</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>בחרו מסד נתונים</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>אישרתם את האזהרה בהפעלה זו. פתחו את מסד הנתונים של אתר זה, עברו לכניסה שנשמרה בהפעלה זו או היכנסו למסד נתונים אחר בטופס שלמטה.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>כניסות בהפעלה זו</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>מחובר כעת</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>אין כניסות שמורות בהפעלה זו.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>היכנסו בטופס שלמטה: כל מערכת ש-AdminNeo תומך בה כאן, כל שרת, משתמש ומסד נתונים, או קובץ SQLite בתוך תיקיית האתר.</translation>
+    </message>
 </context>
 </TS>

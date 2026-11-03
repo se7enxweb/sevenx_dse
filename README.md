@@ -194,11 +194,12 @@ These come with the extension and normally need no change:
      `SELECT node_id, path_identification_string FROM ezcontentobject_tree WHERE depth = 2;`
    - **Export** downloads tables or the whole database (SQL, CSV or TSV); **Import** runs an uploaded SQL file;
    - **Database schema** draws the tables and their foreign keys.
-5. To open another database, use **Change database** at the foot of AdminNeo's left panel. It brings back the
-   dashboard; after confirming, AdminNeo offers the logins it remembers in this session, or a login form for another
-   server or an SQLite file. An SQLite file is given as a path relative to the site directory, for example
-   `var/storage/sqlite3/<name>.db`.
-6. **Logout** in AdminNeo forgets the database logins of your session.
+5. To open another database, use **Change database** at the foot of AdminNeo's left panel. It opens the database
+   chooser straight away (the warning is not asked again in the same session): **Open the database of this site**
+   with one click, the logins remembered in this session (the current connection is marked "Connected now"), and
+   AdminNeo's login form for another server or an SQLite file. An SQLite file is given as a path relative to the site
+   directory, for example `var/storage/sqlite3/<name>.db`.
+6. **Logout** in AdminNeo forgets the database logins of your session and lands on the database chooser.
 
 ### Views
 

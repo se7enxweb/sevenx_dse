@@ -203,5 +203,29 @@
         <source>Connect to another database</source>
         <translation>latlh De&apos; pa&apos; yIrar</translation>
     </message>
+    <message>
+        <source>Choose a database</source>
+        <translation>De&apos; pa&apos; yIwIv</translation>
+    </message>
+    <message>
+        <source>You confirmed the warning in this session. Open the database of this site, switch to a login remembered in this session, or sign in to another database with the form below.</source>
+        <translation>DoS&apos;eghmeH ghuHmoHwI&apos; DaHIjta&apos;. De&apos; pa&apos; Dalo&apos;nISbogh yIpoSmoH, qachmey Daqawbogh yItam, pagh ghItlh ngeD bIngDaq latlh De&apos; pa&apos; yI&apos;el.</translation>
+    </message>
+    <message>
+        <source>Logins in this session</source>
+        <translation>DoS&apos;eghmeH &apos;elmey</translation>
+    </message>
+    <message>
+        <source>Connected now</source>
+        <translation>DaH rar</translation>
+    </message>
+    <message>
+        <source>No logins are remembered in this session.</source>
+        <translation>DoS&apos;eghmeH &apos;elmey qawlu&apos;be&apos;.</translation>
+    </message>
+    <message>
+        <source>Sign in with the form below: every system AdminNeo has here, any server, login and database, or an SQLite file inside the site directory.</source>
+        <translation>ghItlh ngeD bIngDaq yI&apos;el: pat Hoch AdminNeo ghajbogh, jabwI&apos; Hoch, &apos;el, De&apos; pa&apos; joq SQLite De&apos;wI&apos; ta&apos; qach ghom DungDaq.</translation>
+    </message>
 </context>
 </TS>
