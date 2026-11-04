@@ -1,0 +1,2 @@
+# Written at run time (logs, template caches); never part of the extension
+/adminneo/var/
