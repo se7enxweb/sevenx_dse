@@ -69,7 +69,7 @@ if (isset($_GET["oracle"])) {
 
 				set_error_handler(function($errno, $error) {
 					if (ini_bool("html_errors")) {
-						$error = html_entity_decode(strip_tags($error));
+						$error = html_entity_decode(strip_tags($error), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 					}
 
 					$error = preg_replace('~^[^:]*: ~', '', $error);
