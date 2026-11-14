@@ -8,7 +8,7 @@
 <form action="" method="post">
 <p><textarea name="json" rows="10" cols="50"><?php
 if (isset($_POST["json"])) {
-	echo htmlspecialchars($_POST["json"]);
+	echo htmlspecialchars($_POST["json"], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 }
 ?></textarea>
 <p><input type="submit" value="JSON">
@@ -16,7 +16,7 @@ if (isset($_POST["json"])) {
 
 <pre><code class="language-js"><?php
 if (isset($_POST["json"])) {
-	echo htmlspecialchars(json_encode(json_decode($_POST["json"]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+	echo htmlspecialchars(json_encode(json_decode($_POST["json"]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 }
 ?></code></pre>
 
