@@ -3,6 +3,22 @@
 All notable changes to sevenx_dse. Earlier releases are described on
 <https://github.com/se7enxweb/sevenx_dse/releases>.
 
+## 1.1.24 (2026-11-14)
+
+- Updated: Pull request #1 (Marco-JAC) is merged: the logs and template caches that the first import carried under
+  `adminneo/var/` (three logs, two cache files, one of them cut off and not valid PHP) are no longer part of the
+  repository, and `.gitignore` keeps `adminneo/var/` out. Nothing in the extension reads that directory; it is
+  written at run time while AdminNeo runs from its own directory. A clone updated by `git pull` loses the five old
+  files (move a modified one aside first, or the pull stops); everything written there later stays, untracked.
+- Updated: Pull request #2 (Marco-JAC) is merged: the AdminNeo Oracle and PostgreSQL drivers decode their error
+  messages with `html_entity_decode( ..., ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 )`, the default of PHP 8.1 and
+  later. Without flags, PHP 8.0 used `ENT_COMPAT | ENT_HTML401` and left an encoded single quote (`&#039;`) in the
+  message.
+- Updated: The bundled jush JSON demo (`vendor/vrana/jush/json.php`) passes the same flags to `htmlspecialchars()`.
+  No escaping call without flags is left in the extension, its bundled libraries included; `php -l` passes on PHP 8.0
+  and 8.5 for every PHP file.
+- Updated: `ezinfo.php` and `extension.xml` state 1.1.24.
+
 ## 1.1.23 (2026-11-03)
 
 - Updated: The editor no longer asks GitHub for a newer AdminNeo. AdminNeo's version check fetched api.github.com
